@@ -36,6 +36,13 @@ npm run lint
 npm run preview
 ```
 
+## Example
+
+[Click Here to view the GitHub Repository](https://vidigal-code.github.io/markdown-editor-pro)
+
+
+![GIF Exemplo / Example GIF](https://github.com/Vidigal-code/markdown-editor-pro/blob/main/src/assets/example.gif?raw=true)
+
 
 
 ## Notes
