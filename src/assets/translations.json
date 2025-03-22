@@ -1,0 +1,122 @@
+{
+  "en": {
+    "examples": [
+      {
+        "id": 0,
+        "category": "Basic Markdown",
+        "items": [
+          {
+            "id": 0,
+            "title": "Basic Markdown Example",
+            "example-text": "# Basic Markdown\n\nThis is a basic example of Markdown syntax:\n\n- **Bold Text**\n- *Italic Text*\n- [Link](https://example.com)\n\n## Subheading\n1. First item\n2. Second item\n\n```python\n# Example of Python code\nprint('Hello World!')\n```",
+            "example-file": ""
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "category": "GitHub Flavored",
+        "items": [
+          {
+            "id": 1,
+            "title": "GitHub Flavored Markdown",
+            "example-text": "# GitHub Flavored Markdown\n\nThis is an example of GitHub Flavored Markdown.\n\n## Features\n- Tables\n- Task Lists\n\n| Feature | Description |\n|---------|-------------|\n| Table   | Displays data in rows and columns |\n\n- [ ] Task 1\n- [x] Task 2 (completed)",
+            "example-file": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "category": "Templates",
+        "items": [
+          {
+            "id": 2,
+            "title": "Document Template",
+            "example-text": "# Project Title\n\n## Description\nProvide a brief description of the project.\n\n## Installation\nSteps to install the project:\n1. Step 1\n2. Step 2\n\n## Usage\nHow to use the project.\n\n## Contributing\nInstructions for contributing to the project.",
+            "example-file": ""
+          }
+        ]
+      }
+    ]
+  },
+  "pt": {
+    "examples": [
+      {
+        "id": 0,
+        "category": "Markdown Básico",
+        "items": [
+          {
+            "id": 0,
+            "title": "Exemplo Básico de Markdown",
+            "example-text": "# Noções Básicas de Markdown\n\nEste é um exemplo básico de sintaxe Markdown:\n\n- **Texto em Negrito**\n- *Texto em Itálico*\n- [Link](https://exemplo.com)\n\n## Subtítulo\n1. Primeiro item\n2. Segundo item\n\n```python\n# Exemplo de código em Python\nprint('Olá Mundo!')\n```",
+            "example-file": ""
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "category": "GitHub Flavored",
+        "items": [
+          {
+            "id": 1,
+            "title": "Markdown Estilo GitHub",
+            "example-text": "# Markdown Estilo GitHub\n\nEste é um exemplo de Markdown Estilo GitHub.\n\n## Funcionalidades\n- Tabelas\n- Listas de Tarefas\n\n| Funcionalidade | Descrição |\n|----------------|-----------|\n| Tabelas        | Exibe dados em linhas e colunas |\n\n- [ ] Tarefa 1\n- [x] Tarefa 2 (completa)",
+            "example-file": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "category": "Modelos",
+        "items": [
+          {
+            "id": 2,
+            "title": "Modelo de Documento",
+            "example-text": "# Título do Projeto\n\n## Descrição\nForneça uma breve descrição do projeto.\n\n## Instalação\nPassos para instalar o projeto:\n1. Passo 1\n2. Passo 2\n\n## Uso\nComo usar o projeto.\n\n## Contribuição\nInstruções para contribuir com o projeto.",
+            "example-file": ""
+          }
+        ]
+      }
+    ]
+  },
+  "es": {
+    "examples": [
+      {
+        "id": 0,
+        "category": "Markdown Básico",
+        "items": [
+          {
+            "id": 0,
+            "title": "Ejemplo Básico de Markdown",
+            "example-text": "# Conceptos Básicos de Markdown\n\nEste es un ejemplo básico de la sintaxis de Markdown:\n\n- **Texto en Negrita**\n- *Texto en Cursiva*\n- [Enlace](https://ejemplo.com)\n\n## Subtítulo\n1. Primer ítem\n2. Segundo ítem\n\n```python\n# Ejemplo de código en Python\nprint('¡Hola Mundo!')\n```",
+            "example-file": ""
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "category": "GitHub Flavored",
+        "items": [
+          {
+            "id": 1,
+            "title": "Markdown Estilo GitHub",
+            "example-text": "# Markdown Estilo GitHub\n\nEste es un ejemplo de Markdown Estilo GitHub.\n\n## Características\n- Tablas\n- Listas de Tareas\n\n| Característica | Descripción |\n|----------------|-------------|\n| Tablas         | Muestra datos en filas y columnas |\n\n- [ ] Tarea 1\n- [x] Tarea 2 (completada)",
+            "example-file": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "category": "Plantillas",
+        "items": [
+          {
+            "id": 2,
+            "title": "Plantilla de Documento",
+            "example-text": "# Título del Proyecto\n\n## Descripción\nProporcione una breve descripción del proyecto.\n\n## Instalación\nPasos para instalar el proyecto:\n1. Paso 1\n2. Paso 2\n\n## Uso\nCómo utilizar el proyecto.\n\n## Contribuciones\nInstrucciones para contribuir al proyecto.",
+            "example-file": ""
+          }
+        ]
+      }
+    ]
+  }
+}
