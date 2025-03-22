@@ -4,7 +4,7 @@ import Render from "./Render.tsx";
 
 export const App = () => {
     return (
-        <HashRouter>
+        <HashRouter basename="/markdown-editor-pro">
             <Routes>
                 <Route path="/" element={<Presentation />} />
                 <Route path="/render" element={<Render />} />
