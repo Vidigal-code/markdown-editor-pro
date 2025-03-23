@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {Example, ExampleListProps, ThemeProps} from "../../type/Interface.ts";
+import DOMPurify from 'dompurify';
 
 const ExampleListContainer = styled.div<ThemeProps>`
     border: 1px solid ${(props) => props.theme.border};
@@ -73,11 +74,12 @@ const ExampleList: React.FC<ExampleListProps> = ({examples, onSelect}) => {
     }
 
     const handleSelect = (item: Example) => {
-        const exampleToLoad = {
+        const sanitizedExampleToLoad = {
             ...item,
-            "example-file": item["example-file"] || item["example-text"]
+            "example-file": DOMPurify.sanitize(item["example-file"] || item["example-text"])
         };
-        onSelect(exampleToLoad);
+
+        onSelect(sanitizedExampleToLoad);
     };
 
     return (

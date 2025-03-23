@@ -1,6 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
 
 export const lightTheme = {
+    codebackground: '#F0F1F2',
     prebackground: '#F6F8FA',
     background: '#ffffff',
     text: '#000000',
@@ -17,6 +18,7 @@ export const lightTheme = {
 };
 
 export const darkTheme = {
+    codebackground: '#1E242A',
     prebackground: '#151B23',
     background: '#0d1117',
     text: '#ffffff',

@@ -100,6 +100,7 @@ const PreviewContainer = styled.div`
     }
 
     code {
+        background-color: ${props => props.theme.codeBackground};
         padding: 0.2em 0.4em;
         margin: 0 2px;
         font-size: 90%;

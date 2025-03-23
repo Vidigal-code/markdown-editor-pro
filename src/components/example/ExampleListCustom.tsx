@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import {Category, CustomExample, ExampleListCustomProps, ThemeProps} from "../../type/Interface.ts";
+import DOMPurify from 'dompurify';
 
 const ExampleListContainer = styled.div<ThemeProps>`
     border: 1px solid ${(props) => props.theme.border};
@@ -146,7 +147,6 @@ const ExampleListCustom: React.FC<ExampleListCustomProps> = ({examples: initialE
     const [showAddItem, setShowAddItem] = useState<number | null>(null);
     const [newCategory, setNewCategory] = useState('');
     const [newItem, setNewItem] = useState({title: '', code: ''});
-
     const [searchCategory, setSearchCategory] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -169,11 +169,12 @@ const ExampleListCustom: React.FC<ExampleListCustomProps> = ({examples: initialE
     };
 
     const handleAddCategory = () => {
-        if (!newCategory.trim()) return;
+        const sanitizedCategory = DOMPurify.sanitize(newCategory.trim());
+        if (!sanitizedCategory) return;
 
         const newCategoryObj: Category = {
             id: examples.length > 0 ? Math.max(...examples.map(c => c.id)) + 1 : 0,
-            category: newCategory,
+            category: sanitizedCategory,
             items: []
         };
 
@@ -184,14 +185,17 @@ const ExampleListCustom: React.FC<ExampleListCustomProps> = ({examples: initialE
     };
 
     const handleAddItem = (categoryId: number) => {
-        if (!newItem.title.trim()) return;
+        const sanitizedTitle = DOMPurify.sanitize(newItem.title.trim());
+        const sanitizedCode = DOMPurify.sanitize(newItem.code || markdown);
+
+        if (!sanitizedTitle) return;
 
         const updatedExamples = examples.map(category => {
             if (category.id === categoryId) {
                 const newItemObj: CustomExample = {
                     id: category.items.length > 0 ? Math.max(...category.items.map(i => i.id)) + 1 : 0,
-                    title: newItem.title,
-                    "example-text": newItem.code || markdown,
+                    title: sanitizedTitle,
+                    "example-text": sanitizedCode,
                     "example-file": ""
                 };
                 return {
@@ -234,7 +238,6 @@ const ExampleListCustom: React.FC<ExampleListCustomProps> = ({examples: initialE
             setExamples(initialExamples || []);
         }
     }, [initialExamples]);
-
 
     const handleRandom = () => {
         const categoryName = searchCategory.trim();

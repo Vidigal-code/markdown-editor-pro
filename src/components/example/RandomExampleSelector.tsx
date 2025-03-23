@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
 import {Example, RandomExampleSelectorProps, ThemeProps} from "../../type/Interface.ts";
+import DOMPurify from "dompurify";
 
 const SelectorContainer = styled.div<ThemeProps>`
     margin-bottom: 20px;
@@ -83,20 +84,22 @@ const RandomExampleSelector: React.FC<RandomExampleSelectorProps> = ({examples, 
     const [isError, setIsError] = useState(false);
     const [selectedExample, setSelectedExample] = useState<Example | null>(null);
 
+
     const handleRandomSelect = () => {
         if (!examples || !Array.isArray(examples)) {
-            setMessage('No examples available');
+            setMessage("No examples available");
             setIsError(true);
             return;
         }
 
-        const searchTerm = categoryInput.trim().toLowerCase();
-        const matchingCategories = examples.filter(
-            category => category.category.toLowerCase().includes(searchTerm)
+        const sanitizedInput = DOMPurify.sanitize(categoryInput.trim().toLowerCase());
+
+        const matchingCategories = examples.filter((category) =>
+            category.category.toLowerCase().includes(sanitizedInput)
         );
 
         if (matchingCategories.length === 0) {
-            setMessage(`Category not found: "${categoryInput}"`);
+            setMessage(`Category not found: "${sanitizedInput}"`);
             setIsError(true);
             setSelectedExample(null);
             return;
@@ -105,7 +108,7 @@ const RandomExampleSelector: React.FC<RandomExampleSelectorProps> = ({examples, 
         const randomCategoryIndex = Math.floor(Math.random() * matchingCategories.length);
         const selectedCategory = matchingCategories[randomCategoryIndex];
 
-        if (selectedCategory.items.length === 0) {
+        if (!selectedCategory.items || selectedCategory.items.length === 0) {
             setMessage(`No examples in category: "${selectedCategory.category}"`);
             setIsError(true);
             setSelectedExample(null);
@@ -115,14 +118,13 @@ const RandomExampleSelector: React.FC<RandomExampleSelectorProps> = ({examples, 
         const randomExampleIndex = Math.floor(Math.random() * selectedCategory.items.length);
         const randomExample = selectedCategory.items[randomExampleIndex];
 
-        setSelectedExample(randomExample);
-
-        const exampleToLoad = {
+        const sanitizedExampleToLoad = {
             ...randomExample,
-            "example-file": randomExample["example-file"] || randomExample["example-text"]
+            "example-file": DOMPurify.sanitize(randomExample["example-file"] || randomExample["example-text"]),
         };
 
-        onSelect(exampleToLoad);
+        setSelectedExample(sanitizedExampleToLoad);
+        onSelect(sanitizedExampleToLoad);
 
         setMessage(`Random example selected from "${selectedCategory.category}"`);
         setIsError(false);

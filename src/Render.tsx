@@ -10,6 +10,7 @@ import Footer from "./components/footer/Footer.tsx";
 import {Example, ExampleCategory, TranslationData, Language, View} from "./type/Interface.ts";
 import ExampleListCustom from "./components/example/ExampleListCustom.tsx";
 import RandomExampleSelector from "./components/example/RandomExampleSelector.tsx";
+import DOMPurify from 'dompurify';
 
 const Container = styled.div`
     display: flex;
@@ -331,6 +332,8 @@ const Render: React.FC = () => {
     const [selectedView, setSelectedView] = useState<View>('both');
     const [examples, setExamples] = useState<ExampleCategory[]>([]);
 
+
+
     const addToHistory = (content: string): void => {
         if (content !== history[currentHistoryIndex]) {
             const newHistory = history.slice(0, currentHistoryIndex + 1);
@@ -401,19 +404,20 @@ const Render: React.FC = () => {
                 return readmeResponse.text();
             })
             .then(readmeContent => {
-                setMarkdown(readmeContent);
-                addToHistory(readmeContent);
+                const sanitizedContent: string = DOMPurify.sanitize(readmeContent) as string;
+                setMarkdown(sanitizedContent);
+                addToHistory(sanitizedContent);
             })
             .catch(error => {
                 alert(`Error: ${(error as Error).message}`);
             });
-
     };
 
     const handleExampleSelect = async (example: Example): Promise<void> => {
         if (example["example-text"]) {
-            setMarkdown(example["example-text"]);
-            addToHistory(example["example-text"]);
+            const sanitizedContent = DOMPurify.sanitize(example["example-text"]);
+            setMarkdown(sanitizedContent);
+            addToHistory(sanitizedContent);
         } else if (example["example-file"]) {
             fetch(example["example-file"])
                 .then(response => {
@@ -423,8 +427,9 @@ const Render: React.FC = () => {
                     throw new Error("Failed to load file");
                 })
                 .then(content => {
-                    setMarkdown(content);
-                    addToHistory(content);
+                    const sanitizedContent = DOMPurify.sanitize(content);
+                    setMarkdown(sanitizedContent);
+                    addToHistory(sanitizedContent);
                 })
                 .catch(error => {
                     console.error("Failed to load example file:", error);
@@ -448,20 +453,22 @@ const Render: React.FC = () => {
         const file = e.target.files?.[0];
         if (!file) return;
 
+        if (!file.name.endsWith('.md')) {
+            alert('Please select a Markdown (.md) file.');
+            return;
+        }
+
         setMarkdown('');
         addToHistory('');
 
         readFileContent(file)
             .then(content => {
-                setMarkdown(content);
-                addToHistory(content);
-                if (inputFileRef.current) {
-                    inputFileRef.current.value = '';
-                }
+                const sanitizedContent: string = DOMPurify.sanitize(content) as string;
+                setMarkdown(sanitizedContent);
+                addToHistory(sanitizedContent);
             })
             .catch(error => {
-                console.error('Error uploading file:', error);
-                alert('Failed to process file');
+                console.error('Error reading file:', error);
             });
     };
 
