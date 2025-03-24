@@ -3,6 +3,7 @@ import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import styled from 'styled-components';
 import {PreviewProps} from "../../type/Interface.ts";
+import DOMPurify from "dompurify";
 
 const PreviewContainer = styled.div`
     flex: 1;
@@ -174,12 +175,14 @@ const PreviewContainer = styled.div`
 `;
 
 export default function Preview({markdown}: PreviewProps) {
+    const sanitizedMarkdown = DOMPurify.sanitize(markdown);
+
     return (
         <PreviewContainer>
             <ReactMarkdown
                 rehypePlugins={[remarkGfm, rehypeRaw]}
             >
-                {markdown}
+                {sanitizedMarkdown}
             </ReactMarkdown>
         </PreviewContainer>
     );

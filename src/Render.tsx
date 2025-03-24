@@ -415,7 +415,7 @@ const Render: React.FC = () => {
             });
     };
 
-    const handleExampleSelect = async (example: Example): Promise<void> => {
+    const handleExampleSelect = (example: Example): void => {
         if (example["example-text"]) {
             const sanitizedContent = DOMPurify.sanitize(example["example-text"]);
             setMarkdown(sanitizedContent);
@@ -438,6 +438,7 @@ const Render: React.FC = () => {
                 });
         }
     };
+
 
     const toggleView = (): void => {
         if (selectedView === 'editor') {

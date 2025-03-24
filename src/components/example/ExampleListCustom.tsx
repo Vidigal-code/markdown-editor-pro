@@ -320,8 +320,9 @@ const ExampleListCustom: React.FC<ExampleListCustomProps> = ({examples: initialE
                         {category.items.map((item: CustomExample) => (
                             <SubListItem
                                 key={`example-${item.id}`}
+                                onClick={() => handleSelect(item)}
                             >
-                                <span onClick={() => handleSelect(item)}>{item.title}</span>
+                                <span>{item.title}</span>
                                 <DeleteButton onClick={() => handleDeleteItem(category.id, item.id)}>×</DeleteButton>
                             </SubListItem>
                         ))}
