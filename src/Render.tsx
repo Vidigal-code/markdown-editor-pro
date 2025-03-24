@@ -11,6 +11,7 @@ import {Example, ExampleCategory, TranslationData, Language, View} from "./type/
 import ExampleListCustom from "./components/example/ExampleListCustom.tsx";
 import RandomExampleSelector from "./components/example/RandomExampleSelector.tsx";
 import DOMPurify from 'dompurify';
+import {API_GITHUB, API_GITHUB_FINAL_MASTER} from "./api/api.ts";
 
 const Container = styled.div`
     display: flex;
@@ -333,7 +334,6 @@ const Render: React.FC = () => {
     const [examples, setExamples] = useState<ExampleCategory[]>([]);
 
 
-
     const addToHistory = (content: string): void => {
         if (content !== history[currentHistoryIndex]) {
             const newHistory = history.slice(0, currentHistoryIndex + 1);
@@ -396,7 +396,9 @@ const Render: React.FC = () => {
     const fetchGithubMarkdown = async (): Promise<void> => {
         if (!githubUsername) return;
 
-        fetch(`https://raw.githubusercontent.com/${githubUsername}/${githubUsername}/master/README.md`)
+        const url: string = `${API_GITHUB}${githubUsername}/${githubUsername}/${API_GITHUB_FINAL_MASTER}`;
+
+        fetch(url)
             .then(readmeResponse => {
                 if (!readmeResponse.ok) {
                     return Promise.reject(new Error('README not found or repository does not exist'));
