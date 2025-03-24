@@ -453,6 +453,11 @@ const Render: React.FC = () => {
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
+
+        if (inputFileRef.current) {
+            inputFileRef.current.value = '';
+        }
+
         if (!file) return;
 
         if (!file.name.endsWith('.md')) {
@@ -548,7 +553,7 @@ const Render: React.FC = () => {
                                     </SecondaryButton>
                                     <Input
                                         type="file"
-                                        accept=".md"
+                                        accept=".md,text/markdown,text/x-markdown"
                                         style={{display: 'none'}}
                                         ref={inputFileRef}
                                         onChange={handleFileUpload}
