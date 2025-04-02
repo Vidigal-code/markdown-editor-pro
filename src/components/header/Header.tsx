@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import {NavbarProps} from "../../type/Interface.ts";
+import {Language, NavbarProps} from "../../type/Interface.ts";
 import {useNavigate} from "react-router-dom";
 import translations from "../../assets/translations.json";
 import React, {useEffect, useRef} from "react";
@@ -266,7 +266,7 @@ export default function Header({language, onChangeLanguage, isDarkMode, onToggle
                                     key={code}
                                     $isisDarkMode={true}
                                     onClick={() => {
-                                        onChangeLanguage(`${code}`);
+                                        onChangeLanguage(code as Language);
                                         setIsOpenLang(false);
                                     }}
                                 >
