@@ -1,5 +1,10 @@
 {
   "en": {
+    "menu": {
+      "pt": "Portuguese",
+      "en": "English",
+      "es": "Spanish"
+    },
     "examples": [
       {
         "id": 0,
@@ -40,6 +45,11 @@
     ]
   },
   "pt": {
+    "menu": {
+      "pt": "Português",
+      "en": "Inglês",
+      "es": "Espanhol"
+    },
     "examples": [
       {
         "id": 0,
@@ -80,6 +90,11 @@
     ]
   },
   "es": {
+    "menu": {
+      "pt": "Portugués",
+      "en": "Inglés",
+      "es": "Español"
+    },
     "examples": [
       {
         "id": 0,

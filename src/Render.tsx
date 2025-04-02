@@ -323,15 +323,51 @@ const IconButton = styled(PrimaryButton)`
 
 const Render: React.FC = () => {
 
-    const [language, setLanguage] = useState<Language>('en');
     const [markdown, setMarkdown] = useState<string>('');
     const [history, setHistory] = useState<string[]>([]);
     const [currentHistoryIndex, setCurrentHistoryIndex] = useState<number>(-1);
-    const [darkMode, setDarkMode] = useState<boolean>(false);
+
+
+
+    const [isDarkMode, setisDarkMode] = useState<boolean>(() => {
+        const savedisDarkMode = localStorage.getItem('isDarkMode');
+        return savedisDarkMode ? JSON.parse(savedisDarkMode) : false;
+    });
+
+    const toggleisDarkMode = (): void => {
+        setisDarkMode((prev) => {
+            const newisDarkMode = !prev;
+            localStorage.setItem('isDarkMode', JSON.stringify(newisDarkMode));
+            return newisDarkMode;
+        });
+    };
+
+
     const [filename, setFilename] = useState<string>('README.md');
     const [githubUsername, setGithubUsername] = useState<string>('');
     const [selectedView, setSelectedView] = useState<View>('both');
     const [examples, setExamples] = useState<ExampleCategory[]>([]);
+
+
+
+    const [language, setLanguage] = useState<Language>(() => {
+        const savedLanguage = localStorage.getItem('language') as Language;
+        return savedLanguage && translations[savedLanguage] ? savedLanguage : 'en';
+    });
+
+    const handleLanguageChange = (lang: Language): void => {
+        setLanguage(lang);
+        localStorage.setItem('language', lang);
+
+        const initialExample = langData?.examples[0]?.items[0];
+        const initialMarkdown = initialExample?.["example-text"] || '';
+
+        setMarkdown(initialMarkdown);
+        addToHistory(initialMarkdown);
+        setExamples(langData?.examples || []);
+    };
+
+    const langData = translations[language] as TranslationData;
 
 
     const addToHistory = (content: string): void => {
@@ -348,20 +384,9 @@ const Render: React.FC = () => {
         addToHistory(value);
     };
 
-    const handleLanguageChange = (lang: Language): void => {
-        setLanguage(lang);
-        const langData = translations[lang] as TranslationData;
-        const initialExample = langData?.examples[0]?.items[0];
-        const initialMarkdown = initialExample?.["example-text"] || '';
 
-        setMarkdown(initialMarkdown);
-        addToHistory(initialMarkdown);
-        setExamples(langData?.examples || []);
-    };
 
-    const toggleDarkMode = (): void => {
-        setDarkMode((prev) => !prev);
-    };
+
 
     const handleUndo = (): void => {
         if (currentHistoryIndex > 0) {
@@ -491,7 +516,8 @@ const Render: React.FC = () => {
     };
 
     useEffect(() => {
-        const langData = translations[language] as TranslationData;
+
+
         const initialExample = langData?.examples[0]?.items[0];
         const initialMarkdown = initialExample?.["example-text"] || '';
 
@@ -502,14 +528,14 @@ const Render: React.FC = () => {
     }, [language]);
 
     return (
-        <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+        <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
             <GlobalStyles/>
             <Container>
                 <Header
                     language={language}
                     onChangeLanguage={handleLanguageChange}
-                    darkMode={darkMode}
-                    onToggleDarkMode={toggleDarkMode}
+                    isDarkMode={isDarkMode}
+                    onToggleisDarkMode={toggleisDarkMode}
                 />
                 <Content>
                     <Wrapper>
@@ -590,14 +616,14 @@ const Render: React.FC = () => {
                             <Editor
                                 markdown={markdown}
                                 onChange={handleChange}
-                                darkMode={darkMode}
+                                isDarkMode={isDarkMode}
                             />
                         )}
 
                         {(selectedView === 'preview' || selectedView === 'both') && (
                             <Preview
                                 markdown={markdown}
-                                darkMode={darkMode}
+                                isDarkMode={isDarkMode}
                             />
                         )}
                     </EditorPreviewContainer>

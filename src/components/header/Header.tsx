@@ -1,6 +1,10 @@
 import styled from 'styled-components';
-import {Language, NavbarProps} from "../../type/Interface.ts";
+import {NavbarProps} from "../../type/Interface.ts";
 import {useNavigate} from "react-router-dom";
+import translations from "../../assets/translations.json";
+import React, {useEffect, useRef} from "react";
+import { FaLightbulb } from "react-icons/fa6";
+import { FaRegLightbulb } from "react-icons/fa6";
 
 const HeaderContainer = styled.header`
     position: fixed;
@@ -71,31 +75,6 @@ const ControlsContainer = styled.div`
     }
 `;
 
-const LanguageSelect = styled.select`
-    padding: 8px 12px;
-    border: 1px solid #ffffff;
-    border-radius: 8px;
-    background-color: #000000;
-    color: #ffffff;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23FFFFFF' viewBox='0 0 256 256'%3E%3Cpath d='M208.5 96l-80 80-80-80h160z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 12px;
-    padding-right: 30px;
-
-    &:hover, &:focus {
-        background-color: #1a1a1a;
-        transform: scale(1.05);
-    }
-
-    option {
-        background-color: #000000;
-        color: #ffffff;
-    }
-`;
 
 const Button = styled.button`
     padding: 8px 16px;
@@ -125,26 +104,180 @@ const Button = styled.button`
 `;
 
 
-export default function Header({language, onChangeLanguage, darkMode, onToggleDarkMode}: NavbarProps) {
+const SelectContainer = styled.div<{ $isisDarkMode: boolean }>`
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    font-family: inherit;
+    z-index: 40;
 
-    const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        onChangeLanguage(e.target.value as Language);
-    };
+    @media screen and (max-width: 768px) {
+        max-width: 100%;
+    }
+`;
+
+
+const SelectButton = styled.div<{ $isisDarkMode: boolean }>`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.6s ease-in-out;
+
+
+    background-color: transparent;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+
+
+    @media screen and (max-width: 280px) {
+        padding: 6px 12px;
+        font-size: 14px;
+        height: 40px;
+    }
+`;
+
+const SelectArrow = styled.div<{ $isisDarkMode: boolean; $isOpen: boolean }>`
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid ${({$isisDarkMode}) => (!$isisDarkMode ? "#fff" : "#fff")};
+    transform: ${({$isOpen}) => ($isOpen ? 'rotate(180deg)' : 'rotate(0)')};
+    transition: transform 0.3s ease;
+    margin-left: 10px;
+
+    ${SelectButton}:hover & {
+        border-top-color: ${({theme}) => theme.white};
+    }
+`;
+
+const DropdownList = styled.ul<{ $isisDarkMode: boolean; $isOpen: boolean }>`
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    margin: 6px 0 0;
+    padding: 0;
+    list-style: none;
+    border-radius: 8px;
+    background-color: ${({$isisDarkMode}) => ($isisDarkMode ? "#000" : "#fff")};
+    z-index: 50;
+    display: ${({$isOpen}) => ($isOpen ? 'block' : 'none')};
+    text-align: center;
+    border: 2px solid ${({$isisDarkMode}) => (!$isisDarkMode ? "#fff" : "#000")};
+
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: ${({$isisDarkMode}) => ($isisDarkMode ? "#333" : "#eee")};
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: ${({$isisDarkMode}) => ($isisDarkMode ? "#666" : "#ccc")};
+        border-radius: 4px;
+    }
+`;
+
+const DropdownItem = styled.li<{ $isisDarkMode: boolean }>`
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: ${({$isisDarkMode}) => ($isisDarkMode ? "#fff" : "#000")};
+    background: ${({$isisDarkMode}) => ($isisDarkMode ? "#000" : "#fff")};
+    list-style: none;
+
+    position: relative;
+
+    &:hover {
+        background: ${({$isisDarkMode}) => ($isisDarkMode ? "#fff" : "#000")};
+        color: ${({$isisDarkMode}) => ($isisDarkMode ? "#000" : "#fff")};
+    }
+
+    &:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        border-bottom: 2px solid ${({$isisDarkMode}) => ($isisDarkMode ? '#fff' : '#000')};
+    }
+
+    @media (max-width: 280px) {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+`;
+
+
+export default function Header({language, onChangeLanguage, isDarkMode, onToggleisDarkMode}: NavbarProps) {
+
 
     const navigate = useNavigate();
+
+    const pathLang = translations[language as keyof typeof translations];
+
+
+    const [isOpenLang, setIsOpenLang] = React.useState(false);
+
+    const selectRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
+                setIsOpenLang(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
 
     return (
         <HeaderContainer>
             <Title>Markdown Editor Pro</Title>
             <nav>
                 <ControlsContainer>
-                    <LanguageSelect value={language} onChange={handleLanguageChange}>
-                        <option value="en">English</option>
-                        <option value="pt">Português</option>
-                        <option value="es">Español</option>
-                    </LanguageSelect>
-                    <Button onClick={onToggleDarkMode}>
-                        {darkMode ? '☀️' : '🌙'}
+                    <SelectContainer $isisDarkMode={isDarkMode} ref={selectRef}>
+                        <SelectButton
+                            $isisDarkMode={isDarkMode}
+                            onClick={() => setIsOpenLang(!isOpenLang)}
+                        >
+                            {pathLang.menu?.[language as keyof typeof translations]}
+                            <SelectArrow $isisDarkMode={isDarkMode} $isOpen={isOpenLang}/>
+                        </SelectButton>
+
+                        <DropdownList $isisDarkMode={false} $isOpen={isOpenLang}>
+                            {Object.entries(translations[language as keyof typeof translations].menu).map(([code, label]) => (
+                                <DropdownItem
+                                    key={code}
+                                    $isisDarkMode={true}
+                                    onClick={() => {
+                                        onChangeLanguage(`${code}`);
+                                        setIsOpenLang(false);
+                                    }}
+                                >
+                                    {label}
+                                </DropdownItem>
+                            ))}
+                        </DropdownList>
+                    </SelectContainer>
+                    <Button onClick={onToggleisDarkMode}>
+                        {isDarkMode ?  <FaRegLightbulb/>
+                            : <FaLightbulb />}
                     </Button>
                     <Button onClick={() => navigate('/')}>Back</Button>
                 </ControlsContainer>

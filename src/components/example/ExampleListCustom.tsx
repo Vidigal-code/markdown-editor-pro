@@ -155,9 +155,14 @@ const ExampleListCustom: React.FC<ExampleListCustomProps> = ({examples: initialE
         setExamples(updatedExamples);
     };
 
-    const clearCache = () => {
+    const AllCacheExample = () => {
         localStorage.removeItem('customExamples');
         setExamples(initialExamples || []);
+    };
+
+    const Clear = () => {
+        localStorage.removeItem('customExamples');
+        setExamples([]);
     };
 
     const handleSelect = (item: CustomExample) => {
@@ -269,7 +274,8 @@ const ExampleListCustom: React.FC<ExampleListCustomProps> = ({examples: initialE
         <ExampleListContainer>
             <ButtonContainer>
                 <Button onClick={() => setShowAddCategory(true)}>Add Category</Button>
-                <Button onClick={clearCache}>Clear Saved Examples</Button>
+                <Button onClick={AllCacheExample}>All Examples</Button>
+                <Button onClick={Clear}>Clear</Button>
             </ButtonContainer>
 
             {showAddCategory && (
@@ -332,7 +338,7 @@ const ExampleListCustom: React.FC<ExampleListCustomProps> = ({examples: initialE
             <FormContainer>
                 <InputField
                     type="text"
-                    placeholder="Search Category"
+                    placeholder="Enter category name"
                     value={searchCategory}
                     onChange={(e) => {
                         setSearchCategory(e.target.value);

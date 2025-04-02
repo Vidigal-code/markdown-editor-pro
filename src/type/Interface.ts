@@ -1,11 +1,13 @@
 
 export type View = 'editor' | 'preview' | 'both';
 
-export type Language = 'en' | 'pt' | 'es'; // add lang here
 
 export interface TranslationData {
     examples: ExampleCategory[];
 }
+
+
+export type Language = 'en' | 'pt' | 'es'; // add lang here
 
 export interface Example {
     id: number;
@@ -27,21 +29,21 @@ export interface ExampleListProps {
 
 export interface PreviewProps {
     markdown: string;
-    darkMode?: boolean;
+    isDarkMode?: boolean;
 }
 
 
 export interface EditorProps {
     markdown: string;
     onChange: (value: string) => void;
-    darkMode?: boolean;
+    isDarkMode?: boolean;
 }
 
 export interface NavbarProps {
     language: 'en' | 'pt' | 'es';
-    onChangeLanguage: (lang: 'en' | 'pt' | 'es') => void;
-    darkMode: boolean;
-    onToggleDarkMode: () => void;
+    onChangeLanguage: (lang: Language) => void;
+    isDarkMode: boolean;
+    onToggleisDarkMode: () => void;
 }
 
 export interface ExampleListCustomProps extends ExampleListProps {
