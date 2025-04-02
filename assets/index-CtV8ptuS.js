@@ -626,7 +626,7 @@ Instrucciones para contribuir al proyecto.`,"example-file":""}]}]},Xo={en:l_,pt:
     height: 0;
     border-left: 6px solid transparent;
     border-right: 6px solid transparent;
-    border-top: 6px solid ${({$isisDarkMode:e})=>"#fff"};
+    border-top: 6px solid ${({$isDarkMode:e})=>"#fff"};
     transform: ${({$isOpen:e})=>e?"rotate(180deg)":"rotate(0)"};
     transition: transform 0.3s ease;
     margin-left: 10px;
@@ -645,22 +645,22 @@ Instrucciones para contribuir al proyecto.`,"example-file":""}]}]},Xo={en:l_,pt:
     padding: 0;
     list-style: none;
     border-radius: 8px;
-    background-color: ${({$isisDarkMode:e})=>e?"#000":"#fff"};
+    background-color: ${({$isDarkMode:e})=>e?"#000":"#fff"};
     z-index: 50;
     display: ${({$isOpen:e})=>e?"block":"none"};
     text-align: center;
-    border: 2px solid ${({$isisDarkMode:e})=>e?"#000":"#fff"};
+    border: 2px solid ${({$isDarkMode:e})=>e?"#000":"#fff"};
 
     &::-webkit-scrollbar {
         width: 8px;
     }
 
     &::-webkit-scrollbar-track {
-        background: ${({$isisDarkMode:e})=>e?"#333":"#eee"};
+        background: ${({$isDarkMode:e})=>e?"#333":"#eee"};
     }
 
     &::-webkit-scrollbar-thumb {
-        background: ${({$isisDarkMode:e})=>e?"#666":"#ccc"};
+        background: ${({$isDarkMode:e})=>e?"#666":"#ccc"};
         border-radius: 4px;
     }
 `,Uk=Ce.li`
@@ -669,15 +669,15 @@ Instrucciones para contribuir al proyecto.`,"example-file":""}]}]},Xo={en:l_,pt:
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    color: ${({$isisDarkMode:e})=>e?"#fff":"#000"};
-    background: ${({$isisDarkMode:e})=>e?"#000":"#fff"};
+    color: ${({$isDarkMode:e})=>e?"#fff":"#000"};
+    background: ${({$isDarkMode:e})=>e?"#000":"#fff"};
     list-style: none;
 
     position: relative;
 
     &:hover {
-        background: ${({$isisDarkMode:e})=>e?"#fff":"#000"};
-        color: ${({$isisDarkMode:e})=>e?"#000":"#fff"};
+        background: ${({$isDarkMode:e})=>e?"#fff":"#000"};
+        color: ${({$isDarkMode:e})=>e?"#000":"#fff"};
     }
 
     &:not(:last-child)::after {
@@ -686,14 +686,14 @@ Instrucciones para contribuir al proyecto.`,"example-file":""}]}]},Xo={en:l_,pt:
         bottom: 0;
         left: 0;
         width: 100%;
-        border-bottom: 2px solid ${({$isisDarkMode:e})=>e?"#fff":"#000"};
+        border-bottom: 2px solid ${({$isDarkMode:e})=>e?"#fff":"#000"};
     }
 
     @media (max-width: 280px) {
         padding: 6px 12px;
         font-size: 12px;
     }
-`;function Hk({language:e,onChangeLanguage:t,isDarkMode:r,onToggleisDarkMode:i}){var p;const s=W0(),o=Xo[e],[c,h]=zt.useState(!1),m=Q.useRef(null);return Q.useEffect(()=>{const E=b=>{m.current&&!m.current.contains(b.target)&&h(!1)};return document.addEventListener("mousedown",E),()=>{document.removeEventListener("mousedown",E)}},[]),K.jsxs(Lk,{children:[K.jsx(Ik,{children:"Markdown Editor Pro"}),K.jsx("nav",{children:K.jsxs(wk,{children:[K.jsxs(Mk,{$isisDarkMode:r,ref:m,children:[K.jsxs(cy,{$isisDarkMode:r,onClick:()=>h(!c),children:[(p=o.menu)==null?void 0:p[e],K.jsx(Bk,{$isisDarkMode:r,$isOpen:c})]}),K.jsx(Pk,{$isisDarkMode:!1,$isOpen:c,children:Object.entries(Xo[e].menu).map(([E,b])=>K.jsx(Uk,{$isisDarkMode:!0,onClick:()=>{t(E),h(!1)},children:b},E))})]}),K.jsx(lb,{onClick:i,children:r?K.jsx(kk,{}):K.jsx(Dk,{})}),K.jsx(lb,{onClick:()=>s("/"),children:"Back"})]})})]})}const sb=Ce.div`
+`;function Hk({language:e,onChangeLanguage:t,isDarkMode:r,onToggleisDarkMode:i}){var p;const s=W0(),o=Xo[e],[c,h]=zt.useState(!1),m=Q.useRef(null);return Q.useEffect(()=>{const E=b=>{m.current&&!m.current.contains(b.target)&&h(!1)};return document.addEventListener("mousedown",E),()=>{document.removeEventListener("mousedown",E)}},[]),K.jsxs(Lk,{children:[K.jsx(Ik,{children:"Markdown Editor Pro"}),K.jsx("nav",{children:K.jsxs(wk,{children:[K.jsxs(Mk,{$isDarkMode:r,ref:m,children:[K.jsxs(cy,{$isDarkMode:r,onClick:()=>h(!c),children:[(p=o.menu)==null?void 0:p[e],K.jsx(Bk,{$isDarkMode:r,$isOpen:c})]}),K.jsx(Pk,{$isDarkMode:!1,$isOpen:c,children:Object.entries(Xo[e].menu).map(([E,b])=>K.jsx(Uk,{$isDarkMode:!0,onClick:()=>{t(E),h(!1)},children:b},E))})]}),K.jsx(lb,{onClick:i,children:r?K.jsx(kk,{}):K.jsx(Dk,{})}),K.jsx(lb,{onClick:()=>s("/"),children:"Back"})]})})]})}const sb=Ce.div`
     border: 1px solid ${e=>e.theme.border};
     border-radius: 4px;
     padding: 15px;
