@@ -104,7 +104,7 @@ const Button = styled.button`
 `;
 
 
-const SelectContainer = styled.div<{ $isisDarkMode: boolean }>`
+const SelectContainer = styled.div<{ $isDarkMode: boolean }>`
     position: relative;
     width: 100%;
     max-width: 300px;
@@ -117,7 +117,7 @@ const SelectContainer = styled.div<{ $isisDarkMode: boolean }>`
 `;
 
 
-const SelectButton = styled.div<{ $isisDarkMode: boolean }>`
+const SelectButton = styled.div<{ $isDarkMode: boolean }>`
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -141,12 +141,12 @@ const SelectButton = styled.div<{ $isisDarkMode: boolean }>`
     }
 `;
 
-const SelectArrow = styled.div<{ $isisDarkMode: boolean; $isOpen: boolean }>`
+const SelectArrow = styled.div<{ $isDarkMode: boolean; $isOpen: boolean }>`
     width: 0;
     height: 0;
     border-left: 6px solid transparent;
     border-right: 6px solid transparent;
-    border-top: 6px solid ${({$isisDarkMode}) => (!$isisDarkMode ? "#fff" : "#fff")};
+    border-top: 6px solid ${({$isDarkMode}) => (!$isDarkMode ? "#fff" : "#fff")};
     transform: ${({$isOpen}) => ($isOpen ? 'rotate(180deg)' : 'rotate(0)')};
     transition: transform 0.3s ease;
     margin-left: 10px;
@@ -156,7 +156,7 @@ const SelectArrow = styled.div<{ $isisDarkMode: boolean; $isOpen: boolean }>`
     }
 `;
 
-const DropdownList = styled.ul<{ $isisDarkMode: boolean; $isOpen: boolean }>`
+const DropdownList = styled.ul<{ $isDarkMode: boolean; $isOpen: boolean }>`
     position: absolute;
     top: 100%;
     left: 0;
@@ -167,41 +167,41 @@ const DropdownList = styled.ul<{ $isisDarkMode: boolean; $isOpen: boolean }>`
     padding: 0;
     list-style: none;
     border-radius: 8px;
-    background-color: ${({$isisDarkMode}) => ($isisDarkMode ? "#000" : "#fff")};
+    background-color: ${({$isDarkMode}) => ($isDarkMode ? "#000" : "#fff")};
     z-index: 50;
     display: ${({$isOpen}) => ($isOpen ? 'block' : 'none')};
     text-align: center;
-    border: 2px solid ${({$isisDarkMode}) => (!$isisDarkMode ? "#fff" : "#000")};
+    border: 2px solid ${({$isDarkMode}) => (!$isDarkMode ? "#fff" : "#000")};
 
     &::-webkit-scrollbar {
         width: 8px;
     }
 
     &::-webkit-scrollbar-track {
-        background: ${({$isisDarkMode}) => ($isisDarkMode ? "#333" : "#eee")};
+        background: ${({$isDarkMode}) => ($isDarkMode ? "#333" : "#eee")};
     }
 
     &::-webkit-scrollbar-thumb {
-        background: ${({$isisDarkMode}) => ($isisDarkMode ? "#666" : "#ccc")};
+        background: ${({$isDarkMode}) => ($isDarkMode ? "#666" : "#ccc")};
         border-radius: 4px;
     }
 `;
 
-const DropdownItem = styled.li<{ $isisDarkMode: boolean }>`
+const DropdownItem = styled.li<{ $isDarkMode: boolean }>`
     padding: 10px 20px;
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    color: ${({$isisDarkMode}) => ($isisDarkMode ? "#fff" : "#000")};
-    background: ${({$isisDarkMode}) => ($isisDarkMode ? "#000" : "#fff")};
+    color: ${({$isDarkMode}) => ($isDarkMode ? "#fff" : "#000")};
+    background: ${({$isDarkMode}) => ($isDarkMode ? "#000" : "#fff")};
     list-style: none;
 
     position: relative;
 
     &:hover {
-        background: ${({$isisDarkMode}) => ($isisDarkMode ? "#fff" : "#000")};
-        color: ${({$isisDarkMode}) => ($isisDarkMode ? "#000" : "#fff")};
+        background: ${({$isDarkMode}) => ($isDarkMode ? "#fff" : "#000")};
+        color: ${({$isDarkMode}) => ($isDarkMode ? "#000" : "#fff")};
     }
 
     &:not(:last-child)::after {
@@ -210,7 +210,7 @@ const DropdownItem = styled.li<{ $isisDarkMode: boolean }>`
         bottom: 0;
         left: 0;
         width: 100%;
-        border-bottom: 2px solid ${({$isisDarkMode}) => ($isisDarkMode ? '#fff' : '#000')};
+        border-bottom: 2px solid ${({$isDarkMode}) => ($isDarkMode ? '#fff' : '#000')};
     }
 
     @media (max-width: 280px) {
@@ -251,20 +251,20 @@ export default function Header({language, onChangeLanguage, isDarkMode, onToggle
             <Title>Markdown Editor Pro</Title>
             <nav>
                 <ControlsContainer>
-                    <SelectContainer $isisDarkMode={isDarkMode} ref={selectRef}>
+                    <SelectContainer $isDarkMode={isDarkMode} ref={selectRef}>
                         <SelectButton
-                            $isisDarkMode={isDarkMode}
+                            $isDarkMode={isDarkMode}
                             onClick={() => setIsOpenLang(!isOpenLang)}
                         >
                             {pathLang.menu?.[language as keyof typeof translations]}
-                            <SelectArrow $isisDarkMode={isDarkMode} $isOpen={isOpenLang}/>
+                            <SelectArrow $isDarkMode={isDarkMode} $isOpen={isOpenLang}/>
                         </SelectButton>
 
-                        <DropdownList $isisDarkMode={false} $isOpen={isOpenLang}>
+                        <DropdownList $isDarkMode={false} $isOpen={isOpenLang}>
                             {Object.entries(translations[language as keyof typeof translations].menu).map(([code, label]) => (
                                 <DropdownItem
                                     key={code}
-                                    $isisDarkMode={true}
+                                    $isDarkMode={true}
                                     onClick={() => {
                                         onChangeLanguage(code as Language);
                                         setIsOpenLang(false);
