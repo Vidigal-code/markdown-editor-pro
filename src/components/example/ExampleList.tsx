@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Example, ExampleListProps, ThemeProps} from "../../type/Interface.ts";
+import {Example, ExampleListProps, ThemeProps, TranslationData} from "../../type/Interface.ts";
 import DOMPurify from 'dompurify';
+import translations from "../../assets/translations.json";
 
 const ExampleListContainer = styled.div<ThemeProps>`
     border: 1px solid ${(props) => props.theme.border};
@@ -65,11 +66,13 @@ const SubListItem = styled(ListItem)`
 `;
 
 
-const ExampleList: React.FC<ExampleListProps> = ({examples, onSelect}) => {
+const ExampleList: React.FC<ExampleListProps> = ({examples, onSelect, language}) => {
+
+    const langData = translations[language] as TranslationData;
 
     if (!examples || !Array.isArray(examples)) {
         return <ExampleListContainer>
-            <div>No examples available</div>
+            <div>{langData.textExamples.textNoexamplesAvailable}</div>
         </ExampleListContainer>;
     }
 

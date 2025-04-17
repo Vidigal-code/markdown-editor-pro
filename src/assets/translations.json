@@ -6,6 +6,7 @@
       "es": "Spanish"
     },
     "textBack": "Back",
+    "textAreaPlaceholderEditor": "Enter your markdown here...",
     "textGitHubUsername": "GitHub Username",
     "textFilenamePlaceholder": "Filename",
     "textFileManagement": "File Management",
@@ -87,6 +88,7 @@
       "es": "Espanhol"
     },
     "textBack": "Voltar",
+    "textAreaPlaceholderEditor": "Escreva seu markdown aqui",
     "textGitHubUsername": "Nome de usuário do GitHub",
     "textFilenamePlaceholder": "Nome do arquivo",
     "textFileManagement": "Gerenciamento de Arquivos",
@@ -168,6 +170,7 @@
       "es": "Español"
     },
     "textBack": "Volver",
+    "textAreaPlaceholderEditor": "Escribe tu markdown aquí",
     "textGitHubUsername": "Nombre de usuario de GitHub",
     "textFilenamePlaceholder": "Nombre del archivo",
     "textFileManagement": "Gestión de Archivos",

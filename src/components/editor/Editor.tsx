@@ -1,6 +1,7 @@
 import {ChangeEvent} from 'react';
 import styled from 'styled-components';
-import {EditorProps} from "../../type/Interface.ts";
+import {EditorProps, TranslationData} from "../../type/Interface.ts";
+import translations from "../../assets/translations.json";
 
 const EditorContainer = styled.textarea`
     flex: 1;
@@ -47,7 +48,9 @@ const EditorContainer = styled.textarea`
 `;
 
 
-export default function Editor({markdown, onChange}: EditorProps) {
+export default function Editor({markdown, onChange, language}: EditorProps) {
+
+    const langData = translations[language] as TranslationData;
 
     const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
         onChange(e.target.value);
@@ -57,7 +60,7 @@ export default function Editor({markdown, onChange}: EditorProps) {
         <EditorContainer
             value={markdown}
             onChange={handleChange}
-            placeholder="Enter your markdown here..."
+            placeholder={langData.textAreaPlaceholderEditor}
         />
     );
 }

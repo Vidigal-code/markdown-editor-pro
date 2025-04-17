@@ -3,6 +3,7 @@ export type View = 'editor' | 'preview' | 'both';
 
 
 export interface TranslationData {
+    textAreaPlaceholderEditor: string;
     textBack: string;
     textGitHubUsername: string;
     textFilenamePlaceholder: string;
@@ -60,6 +61,7 @@ export interface ExampleCategory {
 }
 
 export interface ExampleListProps {
+    language: 'en' | 'pt' | 'es';
     examples: ExampleCategory[];
     onSelect: (example: Example) => void;
 }
@@ -71,6 +73,7 @@ export interface PreviewProps {
 
 
 export interface EditorProps {
+    language: 'en' | 'pt' | 'es';
     markdown: string;
     onChange: (value: string) => void;
     isDarkMode?: boolean;

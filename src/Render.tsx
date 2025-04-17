@@ -303,7 +303,6 @@ const SecondaryButton = styled(PrimaryButton)`
 `;
 
 
-
 const SectionButtons = styled.div`
     flex: 1 1 300px;
     min-width: 280px;
@@ -314,7 +313,7 @@ const SectionButtons = styled.div`
     transition: transform 0.2s;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between; 
+    justify-content: space-between;
     gap: 12px;
 
     @media ${mediaQueries.tablet} {
@@ -327,7 +326,7 @@ const SectionButtons = styled.div`
         min-width: 0;
         padding: 12px;
         border-radius: 8px;
-        justify-content: center; 
+        justify-content: center;
     }
 
     @media ${mediaQueries.fold} {
@@ -339,7 +338,7 @@ const SectionButtons = styled.div`
 
 const ButtonRendererView = styled(PrimaryButton)`
     padding: 12px;
-    width: calc(33.33% - 8px); 
+    width: calc(33.33% - 8px);
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -347,7 +346,7 @@ const ButtonRendererView = styled(PrimaryButton)`
 
     @media ${mediaQueries.phone} {
         padding: 10px;
-        width: 100%; 
+        width: 100%;
     }
 
     @media ${mediaQueries.fold} {
@@ -357,14 +356,11 @@ const ButtonRendererView = styled(PrimaryButton)`
 `;
 
 
-
-
 const Render: React.FC = () => {
 
     const [markdown, setMarkdown] = useState<string>('');
     const [history, setHistory] = useState<string[]>([]);
     const [currentHistoryIndex, setCurrentHistoryIndex] = useState<number>(-1);
-
 
 
     const [isDarkMode, setisDarkMode] = useState<boolean>(() => {
@@ -385,7 +381,6 @@ const Render: React.FC = () => {
     const [githubUsername, setGithubUsername] = useState<string>('');
     const [selectedView, setSelectedView] = useState<View>('both');
     const [examples, setExamples] = useState<ExampleCategory[]>([]);
-
 
 
     const [language, setLanguage] = useState<Language>(() => {
@@ -421,9 +416,6 @@ const Render: React.FC = () => {
         setMarkdown(value);
         addToHistory(value);
     };
-
-
-
 
 
     const handleUndo = (): void => {
@@ -604,7 +596,8 @@ const Render: React.FC = () => {
                                         value={githubUsername}
                                         onChange={(e) => setGithubUsername(e.target.value)}
                                     />
-                                    <PrimaryButton onClick={fetchGithubMarkdown}>{langData.textFetchREADME}</PrimaryButton>
+                                    <PrimaryButton
+                                        onClick={fetchGithubMarkdown}>{langData.textFetchREADME}</PrimaryButton>
                                 </InputGroup>
                             </Section>
 
@@ -633,24 +626,25 @@ const Render: React.FC = () => {
                             </Section>
 
                             <Section>
-                            <SectionTitle>{langData.textViewMode}</SectionTitle>
-                            <SectionButtons>
-                                <ButtonRendererView onClick={toggleBoth}>
-                                    {langData.textBoth}
-                                </ButtonRendererView>
-                                <ButtonRendererView onClick={togglePreview}>
-                                    {langData.textPreview}
-                                </ButtonRendererView>
-                                <ButtonRendererView onClick={toggleEditor}>
-                                    {langData.textEditor}
-                                </ButtonRendererView>
-                            </SectionButtons>
+                                <SectionTitle>{langData.textViewMode}</SectionTitle>
+                                <SectionButtons>
+                                    <ButtonRendererView onClick={toggleBoth}>
+                                        {langData.textBoth}
+                                    </ButtonRendererView>
+                                    <ButtonRendererView onClick={togglePreview}>
+                                        {langData.textPreview}
+                                    </ButtonRendererView>
+                                    <ButtonRendererView onClick={toggleEditor}>
+                                        {langData.textEditor}
+                                    </ButtonRendererView>
+                                </SectionButtons>
                             </Section>
                         </ToolbarContainer>
 
                     </Wrapper>
                     <SidePanel>
-                        <ExampleList examples={examples} onSelect={handleExampleSelect}/>
+                        <ExampleList language={language}
+                                     examples={examples} onSelect={handleExampleSelect}/>
                         <div style={{marginTop: '1rem'}}>
                             <RandomExampleSelector
                                 examples={examples}
@@ -659,7 +653,8 @@ const Render: React.FC = () => {
                             />
                         </div>
                         <div style={{marginTop: '1rem'}}>
-                            <ExampleListCustom markdown={markdown} examples={examples} onSelect={handleExampleSelect} language={language}/>
+                            <ExampleListCustom markdown={markdown} examples={examples} onSelect={handleExampleSelect}
+                                               language={language}/>
                         </div>
                     </SidePanel>
 
@@ -669,6 +664,7 @@ const Render: React.FC = () => {
                                 markdown={markdown}
                                 onChange={handleChange}
                                 isDarkMode={isDarkMode}
+                                language={language}
                             />
                         )}
 
