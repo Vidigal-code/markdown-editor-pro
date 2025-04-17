@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
-import {Category, CustomExample, ExampleListCustomProps, ThemeProps} from "../../type/Interface.ts";
+import {Category, CustomExample, ExampleListCustomProps, ThemeProps, TranslationData} from "../../type/Interface.ts";
 import DOMPurify from 'dompurify';
+import translations from "../../assets/translations.json";
 
 const ExampleListContainer = styled.div<ThemeProps>`
     border: 1px solid ${(props) => props.theme.border};
@@ -12,7 +13,7 @@ const ExampleListContainer = styled.div<ThemeProps>`
     background: ${(props) => props.theme.background};
     text-align: center;
     scrollbar-width: thin;
-    scrollbar-color: ${(props) => props.theme.scrollbarThumb} ${(props) => props.theme.scrollbarTrack}; /* para Firefox */
+    scrollbar-color: ${(props) => props.theme.scrollbarThumb} ${(props) => props.theme.scrollbarTrack}; 
 
     ::-webkit-scrollbar {
         width: 8px;
@@ -140,7 +141,7 @@ const ErrorMessage = styled.div`
 `;
 
 
-const ExampleListCustom: React.FC<ExampleListCustomProps> = ({examples: initialExamples, onSelect, markdown}) => {
+const ExampleListCustom: React.FC<ExampleListCustomProps> = ({examples: initialExamples, onSelect, markdown, language}) => {
 
     const [examples, setExamples] = useState<Category[]>([]);
     const [showAddCategory, setShowAddCategory] = useState(false);
@@ -149,6 +150,9 @@ const ExampleListCustom: React.FC<ExampleListCustomProps> = ({examples: initialE
     const [newItem, setNewItem] = useState({title: '', code: ''});
     const [searchCategory, setSearchCategory] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+
+
+    const langData = translations[language] as TranslationData;
 
     const saveToCache = (updatedExamples: Category[]) => {
         localStorage.setItem('customExamples', JSON.stringify(updatedExamples));
@@ -160,7 +164,7 @@ const ExampleListCustom: React.FC<ExampleListCustomProps> = ({examples: initialE
         setExamples(initialExamples || []);
     };
 
-    const Clear = () => {
+    const Clean = () => {
         localStorage.removeItem('customExamples');
         setExamples([]);
     };
@@ -254,7 +258,7 @@ const ExampleListCustom: React.FC<ExampleListCustomProps> = ({examples: initialE
         );
 
         if (!foundCategory) {
-            setErrorMessage('Category not found');
+            setErrorMessage(langData?.textExamples.textCategoryNotFound);
             return;
         }
 
@@ -273,23 +277,23 @@ const ExampleListCustom: React.FC<ExampleListCustomProps> = ({examples: initialE
     return (
         <ExampleListContainer>
             <ButtonContainer>
-                <Button onClick={() => setShowAddCategory(true)}>Add Category</Button>
-                <Button onClick={AllCacheExample}>All Examples</Button>
-                <Button onClick={Clear}>Clear</Button>
+                <Button onClick={() => setShowAddCategory(true)}>{langData?.textExamples.textAddCategory}</Button>
+                <Button onClick={AllCacheExample}>{langData?.textExamples.textAllExamples}</Button>
+                <Button onClick={Clean}>{langData?.textExamples.textClean}</Button>
             </ButtonContainer>
 
             {showAddCategory && (
                 <FormContainer>
-                    <FormTitle>Add New Category</FormTitle>
+                    <FormTitle>{langData?.textExamples.textAddNewCategory}</FormTitle>
                     <InputField
                         type="text"
-                        placeholder="Category Name"
+                        placeholder={langData?.textExamples.textCategoryName}
                         value={newCategory}
                         onChange={(e) => setNewCategory(e.target.value)}
                     />
                     <ButtonContainer>
-                        <Button onClick={handleAddCategory}>Save</Button>
-                        <Button onClick={() => setShowAddCategory(false)}>Cancel</Button>
+                        <Button onClick={handleAddCategory}>{langData?.textExamples.textSave}</Button>
+                        <Button onClick={() => setShowAddCategory(false)}>{langData?.textExamples.textCancel}</Button>
                     </ButtonContainer>
                 </FormContainer>
             )}
@@ -299,25 +303,25 @@ const ExampleListCustom: React.FC<ExampleListCustomProps> = ({examples: initialE
                     <CategoryTitle>
                         {category.category}
                         <div>
-                            <Button onClick={() => setShowAddItem(category.id)}>Add Item</Button>
+                            <Button onClick={() => setShowAddItem(category.id)}>{langData?.textExamples.textAddItem}</Button>
                             <DeleteButton onClick={() => handleDeleteCategory(category.id)}>×</DeleteButton>
                         </div>
                     </CategoryTitle>
 
                     {showAddItem === category.id && (
                         <FormContainer>
-                            <FormTitle>Add New Item</FormTitle>
+                            <FormTitle>{langData?.textExamples.textAddNewItem}</FormTitle>
                             <InputField
                                 type="text"
-                                placeholder="Item Title"
+                                placeholder={langData?.textExamples.textItemTitle}
                                 value={newItem.title}
                                 onChange={(e) => setNewItem({...newItem, title: e.target.value})}
                             />
                             <ButtonContainer>
                                 <Button onClick={() => handleAddItem(category.id)}>
-                                    Save Current Editor Content
+                                    {langData?.textExamples.textSaveCurrentEditorContent}
                                 </Button>
-                                <Button onClick={() => setShowAddItem(null)}>Cancel</Button>
+                                <Button onClick={() => setShowAddItem(null)}>{langData?.textExamples.textCancel}</Button>
                             </ButtonContainer>
                         </FormContainer>
                     )}
@@ -338,14 +342,14 @@ const ExampleListCustom: React.FC<ExampleListCustomProps> = ({examples: initialE
             <FormContainer>
                 <InputField
                     type="text"
-                    placeholder="Enter category name"
+                    placeholder={langData?.textExamples.textCategoryName}
                     value={searchCategory}
                     onChange={(e) => {
                         setSearchCategory(e.target.value);
                         setErrorMessage('');
                     }}
                 />
-                <Button onClick={handleRandom}>Random</Button>
+                <Button onClick={handleRandom}>{langData?.textExamples.textRandom}</Button>
             </FormContainer>
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </ExampleListContainer>

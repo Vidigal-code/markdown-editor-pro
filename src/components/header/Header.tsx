@@ -152,7 +152,7 @@ const SelectArrow = styled.div<{ $isDarkMode: boolean; $isOpen: boolean }>`
     margin-left: 10px;
 
     ${SelectButton}:hover & {
-        border-top-color: ${({theme}) => theme.white};
+        border-top-color: ${({theme}) => theme.linka};
     }
 `;
 
@@ -225,7 +225,7 @@ export default function Header({language, onChangeLanguage, isDarkMode, onToggle
 
     const navigate = useNavigate();
 
-    const pathLang = translations[language as keyof typeof translations];
+    const langData = translations[language as keyof typeof translations];
 
 
     const [isOpenLang, setIsOpenLang] = React.useState(false);
@@ -256,7 +256,7 @@ export default function Header({language, onChangeLanguage, isDarkMode, onToggle
                             $isDarkMode={isDarkMode}
                             onClick={() => setIsOpenLang(!isOpenLang)}
                         >
-                            {pathLang.menu?.[language as keyof typeof translations]}
+                            {langData.menu?.[language as keyof typeof translations]}
                             <SelectArrow $isDarkMode={isDarkMode} $isOpen={isOpenLang}/>
                         </SelectButton>
 
@@ -279,7 +279,7 @@ export default function Header({language, onChangeLanguage, isDarkMode, onToggle
                         {isDarkMode ?  <FaRegLightbulb/>
                             : <FaLightbulb />}
                     </Button>
-                    <Button onClick={() => navigate('/')}>Back</Button>
+                    <Button onClick={() => navigate('/')}>{langData.textBack}</Button>
                 </ControlsContainer>
             </nav>
         </HeaderContainer>

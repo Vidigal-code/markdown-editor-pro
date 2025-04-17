@@ -1,5 +1,25 @@
 import { createGlobalStyle } from 'styled-components';
 
+
+declare module 'styled-components' {
+    export interface DefaultTheme {
+        codebackground: string;
+        prebackground: string;
+        background: string;
+        text: string;
+        primary: string;
+        secondary: string;
+        border: string;
+        scrollbar: string;
+        scrollbarThumb: string;
+        scrollbarTrack: string;
+        blockquote: string;
+        codeBackground: string;
+        codeText: string;
+        linka: string;
+    }
+}
+
 export const lightTheme = {
     codebackground: '#F0F1F2',
     prebackground: '#F6F8FA',
@@ -14,7 +34,7 @@ export const lightTheme = {
     blockquote: '#262b32',
     codeBackground: '#f6f8fa',
     codeText: '#24292e',
-    linka:'green',
+    linka:'white',
 };
 
 export const darkTheme = {

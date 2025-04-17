@@ -3,9 +3,46 @@ export type View = 'editor' | 'preview' | 'both';
 
 
 export interface TranslationData {
+    textBack: string;
+    textGitHubUsername: string;
+    textFilenamePlaceholder: string;
+    textFileManagement: string;
+    textDownload: string;
+    textGitHubIntegration: string;
+    textFetchREADME: string;
+    textEditorActions: string;
+    textUndo: string;
+    textRedo: string;
+    textClean: string;
+    textUpload: string;
+    textViewMode: string;
+    textPreview: string;
+    textBoth: string;
+    textEditor: string;
+    textExamples: TextExamples;
     examples: ExampleCategory[];
 }
 
+export interface TextExamples {
+    textSelected: string;
+    textCategory: string;
+    textSave: string;
+    textCancel: string;
+    textRandom: string;
+    textCategoryName: string;
+    textRandomExampleSelectedFrom: string;
+    textNoexamplesInCategory : string;
+    textNoexamplesAvailable: string;
+    textCategoryNotFound: string;
+    textAddNewCategory: string;
+    textAddCategory: string;
+    textAllExamples: string;
+    textAddItem: string;
+    textItemTitle: string;
+    textAddNewItem: string;
+    textSaveCurrentEditorContent: string;
+    textClean: string;
+}
 
 export type Language = 'en' | 'pt' | 'es'; // add lang here
 
@@ -48,6 +85,7 @@ export interface NavbarProps {
 
 export interface ExampleListCustomProps extends ExampleListProps {
     markdown: string;
+    language: 'en' | 'pt' | 'es';
 }
 
 export interface ThemeProps {
@@ -74,6 +112,7 @@ export interface Category {
 }
 
 export interface RandomExampleSelectorProps {
+    language: 'en' | 'pt' | 'es';
     examples: Array<{
         id: number;
         category: string;

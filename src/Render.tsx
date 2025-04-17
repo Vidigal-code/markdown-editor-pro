@@ -302,16 +302,32 @@ const SecondaryButton = styled(PrimaryButton)`
     }
 `;
 
-const IconButton = styled(PrimaryButton)`
-    padding: 12px;
-    width: 100%;
-    border-radius: 8px;
+
+
+const SectionButtons = styled.div`
+    flex: 1 1 300px;
+    min-width: 280px;
+    background: ${({theme}) => theme.background};
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.2s;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-wrap: wrap;
+    justify-content: space-between; 
+    gap: 12px;
+
+    @media ${mediaQueries.tablet} {
+        min-width: 240px;
+        padding: 16px;
+    }
 
     @media ${mediaQueries.phone} {
-        padding: 10px;
+        flex: 1 1 100%;
+        min-width: 0;
+        padding: 12px;
+        border-radius: 8px;
+        justify-content: center; 
     }
 
     @media ${mediaQueries.fold} {
@@ -319,6 +335,28 @@ const IconButton = styled(PrimaryButton)`
         border-radius: 6px;
     }
 `;
+
+
+const ButtonRendererView = styled(PrimaryButton)`
+    padding: 12px;
+    width: calc(33.33% - 8px); 
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    @media ${mediaQueries.phone} {
+        padding: 10px;
+        width: 100%; 
+    }
+
+    @media ${mediaQueries.fold} {
+        padding: 8px;
+        border-radius: 6px;
+    }
+`;
+
+
 
 
 const Render: React.FC = () => {
@@ -402,7 +440,7 @@ const Render: React.FC = () => {
         }
     };
 
-    const handleClear = (): void => {
+    const handleClean = (): void => {
         setMarkdown('');
         addToHistory('');
     };
@@ -465,14 +503,20 @@ const Render: React.FC = () => {
     };
 
 
-    const toggleView = (): void => {
-        if (selectedView === 'editor') {
-            setSelectedView('preview');
-        } else if (selectedView === 'preview') {
-            setSelectedView('both');
-        } else {
-            setSelectedView('editor');
-        }
+    const editorView = 'editor';
+    const previewView = 'preview';
+    const bothView = 'both';
+
+    const togglePreview = (): void => {
+        setSelectedView(previewView);
+    };
+
+    const toggleBoth = (): void => {
+        setSelectedView(bothView);
+    };
+
+    const toggleEditor = (): void => {
+        setSelectedView(editorView);
     };
 
     const inputFileRef = useRef<HTMLInputElement>(null);
@@ -541,42 +585,42 @@ const Render: React.FC = () => {
                     <Wrapper>
                         <ToolbarContainer>
                             <Section>
-                                <SectionTitle>File Management</SectionTitle>
+                                <SectionTitle>{langData.textFileManagement}</SectionTitle>
                                 <InputGroup>
                                     <Input
-                                        placeholder="Filename"
+                                        placeholder={langData.textFilenamePlaceholder}
                                         value={filename}
                                         onChange={(e) => setFilename(e.target.value)}
                                     />
-                                    <PrimaryButton onClick={handleDownload}>Download</PrimaryButton>
+                                    <PrimaryButton onClick={handleDownload}>{langData.textDownload}</PrimaryButton>
                                 </InputGroup>
                             </Section>
 
                             <Section>
-                                <SectionTitle>GitHub Integration</SectionTitle>
+                                <SectionTitle>{langData.textGitHubIntegration}</SectionTitle>
                                 <InputGroup>
                                     <Input
-                                        placeholder="GitHub Username"
+                                        placeholder={langData.textGitHubUsername}
                                         value={githubUsername}
                                         onChange={(e) => setGithubUsername(e.target.value)}
                                     />
-                                    <PrimaryButton onClick={fetchGithubMarkdown}>Fetch README</PrimaryButton>
+                                    <PrimaryButton onClick={fetchGithubMarkdown}>{langData.textFetchREADME}</PrimaryButton>
                                 </InputGroup>
                             </Section>
 
                             <Section>
-                                <SectionTitle>Editor Actions</SectionTitle>
+                                <SectionTitle>{langData.textEditorActions}</SectionTitle>
                                 <InputGroup>
                                     <SecondaryButton onClick={handleUndo} disabled={currentHistoryIndex <= 0}>
-                                        Undo
+                                        {langData.textUndo}
                                     </SecondaryButton>
                                     <SecondaryButton onClick={handleRedo}
                                                      disabled={currentHistoryIndex >= history.length - 1}>
-                                        Redo
+                                        {langData.textRedo}
                                     </SecondaryButton>
-                                    <SecondaryButton onClick={handleClear}>Clear</SecondaryButton>
+                                    <SecondaryButton onClick={handleClean}>Clean</SecondaryButton>
                                     <SecondaryButton onClick={() => inputFileRef.current?.click()}>
-                                        Upload
+                                        {langData.textUpload}
                                     </SecondaryButton>
                                     <Input
                                         type="file"
@@ -589,14 +633,21 @@ const Render: React.FC = () => {
                             </Section>
 
                             <Section>
-                                <SectionTitle>View Mode</SectionTitle>
-                                <IconButton onClick={toggleView}>
-                                    {selectedView === 'editor' ? 'Preview'
-                                        : selectedView === 'preview' ? 'Both'
-                                            : 'Editor'}
-                                </IconButton>
+                            <SectionTitle>{langData.textViewMode}</SectionTitle>
+                            <SectionButtons>
+                                <ButtonRendererView onClick={toggleBoth}>
+                                    {langData.textBoth}
+                                </ButtonRendererView>
+                                <ButtonRendererView onClick={togglePreview}>
+                                    {langData.textPreview}
+                                </ButtonRendererView>
+                                <ButtonRendererView onClick={toggleEditor}>
+                                    {langData.textEditor}
+                                </ButtonRendererView>
+                            </SectionButtons>
                             </Section>
                         </ToolbarContainer>
+
                     </Wrapper>
                     <SidePanel>
                         <ExampleList examples={examples} onSelect={handleExampleSelect}/>
@@ -604,10 +655,11 @@ const Render: React.FC = () => {
                             <RandomExampleSelector
                                 examples={examples}
                                 onSelect={handleExampleSelect}
+                                language={language}
                             />
                         </div>
                         <div style={{marginTop: '1rem'}}>
-                            <ExampleListCustom markdown={markdown} examples={examples} onSelect={handleExampleSelect}/>
+                            <ExampleListCustom markdown={markdown} examples={examples} onSelect={handleExampleSelect} language={language}/>
                         </div>
                     </SidePanel>
 

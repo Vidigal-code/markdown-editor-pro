@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
-import {Example, RandomExampleSelectorProps, ThemeProps} from "../../type/Interface.ts";
+import {Example, RandomExampleSelectorProps, ThemeProps, TranslationData} from "../../type/Interface.ts";
 import DOMPurify from "dompurify";
+import translations from "../../assets/translations.json";
 
 const SelectorContainer = styled.div<ThemeProps>`
     margin-bottom: 20px;
@@ -22,7 +23,7 @@ const Input = styled.input<ThemeProps>`
     padding: 8px 12px;
     border: 1px solid ${(props) => props.theme.border};
     border-radius: 4px;
-    background: ${(props) => props.theme.inputBackground || props.theme.background};
+    background: ${(props) => props.theme.background};
     color: ${(props) => props.theme.text};
 
     &:focus {
@@ -42,12 +43,12 @@ const Button = styled.button<ThemeProps>`
     transition: background 0.2s;
 
     &:hover {
-        background: ${(props) => props.theme.primaryDark || props.theme.primary};
+        background: ${(props) =>  props.theme.primary};
         opacity: 0.9;
     }
 
     &:disabled {
-        background: ${(props) => props.theme.disabled || '#ccc'};
+        background: #ccc;
         cursor: not-allowed;
     }
 `;
@@ -58,8 +59,8 @@ const Message = styled.div.withConfig({
     padding: 10px;
     margin-top: 10px;
     border-radius: 4px;
-    background: ${({isError, theme}) => isError ? theme.error || '#ffebee' : theme.success || '#e8f5e9'};
-    color: ${({isError, theme}) => isError ? theme.errorText || '#c62828' : theme.successText || '#2e7d32'};
+    background: ${({isError}) => isError ?  '#ffebee' : '#e8f5e9'};
+    color: ${({isError}) => isError ?  '#c62828' :  '#2e7d32'};
     display: ${({children}) => children ? 'block' : 'none'};
 `;
 
@@ -68,7 +69,7 @@ const SelectedExample = styled.div<ThemeProps>`
     padding: 12px;
     border: 1px dashed ${(props) => props.theme.border};
     border-radius: 4px;
-    background: ${(props) => props.theme.backgroundLight || props.theme.background};
+    background: ${(props) =>  props.theme.background};
 `;
 
 const Title = styled.h4<ThemeProps>`
@@ -77,17 +78,18 @@ const Title = styled.h4<ThemeProps>`
 `;
 
 
-const RandomExampleSelector: React.FC<RandomExampleSelectorProps> = ({examples, onSelect}) => {
+const RandomExampleSelector: React.FC<RandomExampleSelectorProps> = ({examples, onSelect, language}) => {
 
     const [categoryInput, setCategoryInput] = useState('');
     const [message, setMessage] = useState('');
     const [isError, setIsError] = useState(false);
     const [selectedExample, setSelectedExample] = useState<Example | null>(null);
 
+    const langData = translations[language] as TranslationData;
 
     const handleRandomSelect = () => {
         if (!examples || !Array.isArray(examples)) {
-            setMessage("No examples available");
+            setMessage(langData?.textExamples.textNoexamplesAvailable);
             setIsError(true);
             return;
         }
@@ -99,7 +101,7 @@ const RandomExampleSelector: React.FC<RandomExampleSelectorProps> = ({examples, 
         );
 
         if (matchingCategories.length === 0) {
-            setMessage(`Category not found: "${sanitizedInput}"`);
+            setMessage(`${langData?.textExamples.textCategoryNotFound}: ${String(sanitizedInput)}`);
             setIsError(true);
             setSelectedExample(null);
             return;
@@ -109,7 +111,7 @@ const RandomExampleSelector: React.FC<RandomExampleSelectorProps> = ({examples, 
         const selectedCategory = matchingCategories[randomCategoryIndex];
 
         if (!selectedCategory.items || selectedCategory.items.length === 0) {
-            setMessage(`No examples in category: "${selectedCategory.category}"`);
+            setMessage(`${langData?.textExamples.textNoexamplesInCategory}: ${selectedCategory.category}`);
             setIsError(true);
             setSelectedExample(null);
             return;
@@ -126,7 +128,7 @@ const RandomExampleSelector: React.FC<RandomExampleSelectorProps> = ({examples, 
         setSelectedExample(sanitizedExampleToLoad);
         onSelect(sanitizedExampleToLoad);
 
-        setMessage(`Random example selected from "${selectedCategory.category}"`);
+        setMessage(`${langData?.textExamples.textRandomExampleSelectedFrom} ${selectedCategory.category}`);
         setIsError(false);
     };
 
@@ -135,7 +137,7 @@ const RandomExampleSelector: React.FC<RandomExampleSelectorProps> = ({examples, 
             <InputGroup>
                 <Input
                     type="text"
-                    placeholder="Enter category name"
+                    placeholder={langData?.textExamples.textCategoryName}
                     value={categoryInput}
                     onChange={(e) => setCategoryInput(e.target.value)}
                 />
@@ -144,7 +146,7 @@ const RandomExampleSelector: React.FC<RandomExampleSelectorProps> = ({examples, 
                 onClick={handleRandomSelect}
                 disabled={!examples || examples.length === 0}
             >
-                Random
+                {langData?.textExamples.textRandom}
             </Button>
 
             {message && (
@@ -156,8 +158,8 @@ const RandomExampleSelector: React.FC<RandomExampleSelectorProps> = ({examples, 
 
             {selectedExample && (
                 <SelectedExample>
-                    <Title>Selected: {selectedExample.title}</Title>
-                    <div>Category: {examples.find(cat =>
+                    <Title>{langData?.textExamples.textSelected} : {selectedExample.title}</Title>
+                    <div>{langData?.textExamples.textCategory} : {examples.find(cat =>
                         cat.items.some(item => item.id === selectedExample.id)
                     )?.category}</div>
                     <div>ID: {selectedExample.id}</div>
