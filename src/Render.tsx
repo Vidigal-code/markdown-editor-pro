@@ -618,7 +618,7 @@ const Render: React.FC = () => {
                                                      disabled={currentHistoryIndex >= history.length - 1}>
                                         {langData.textRedo}
                                     </SecondaryButton>
-                                    <SecondaryButton onClick={handleClean}>Clean</SecondaryButton>
+                                    <SecondaryButton onClick={handleClean}>{langData.textClean}</SecondaryButton>
                                     <SecondaryButton onClick={() => inputFileRef.current?.click()}>
                                         {langData.textUpload}
                                     </SecondaryButton>
