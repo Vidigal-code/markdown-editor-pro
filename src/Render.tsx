@@ -270,6 +270,32 @@ const SecondaryButton = styled(PrimaryButton)`
 `;
 
 
+const ButtonRendererView = styled(PrimaryButton)`
+    flex: 1 1 calc(25% - 9px); 
+    padding: 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 100px;
+
+    @media ${mediaQueries.tablet} {
+        flex: 1 1 calc(50% - 6px); 
+        padding: 10px;
+    }
+
+    @media ${mediaQueries.phone} {
+        flex: 1 1 100%; 
+        padding: 10px;
+        width: 100%;
+    }
+
+    @media ${mediaQueries.fold} {
+        padding: 8px;
+        border-radius: 6px;
+    }
+`;
+
 const SectionButtons = styled.div`
     flex: 1 1 300px;
     min-width: 280px;
@@ -302,25 +328,6 @@ const SectionButtons = styled.div`
     }
 `;
 
-
-const ButtonRendererView = styled(PrimaryButton)`
-    padding: 12px;
-    width: calc(33.33% - 8px);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    @media ${mediaQueries.phone} {
-        padding: 10px;
-        width: 100%;
-    }
-
-    @media ${mediaQueries.fold} {
-        padding: 8px;
-        border-radius: 6px;
-    }
-`;
 
 
 const Render: React.FC = () => {
@@ -515,10 +522,20 @@ const Render: React.FC = () => {
     };
 
     useEffect(() => {
+
+        if (!markdown) {
+            const initialExample = langData?.examples[0]?.items[0];
+            const initialMarkdown = initialExample?.["example-text"] || '';
+
+            setMarkdown(initialMarkdown);
+            addToHistory(initialMarkdown);
+        }
+
         setExamples(langData?.examples || []);
+
     }, [langData.examples]);
 
-    const {isGlobalUiAdvancedOptions} = useGlobalAdvancedOptions();
+    const {isGlobalUiAdvancedOptions, setGlobalUiAdvancedOptions} = useGlobalAdvancedOptions();
 
 
     return (
@@ -634,6 +651,12 @@ const Render: React.FC = () => {
                                 </ButtonRendererView>
                                 <ButtonRendererView onClick={toggleEditor}>
                                     {langData.textEditor}
+                                </ButtonRendererView>
+                                <ButtonRendererView
+                                    onClick={() => setGlobalUiAdvancedOptions(!isGlobalUiAdvancedOptions)}
+                                >
+                                    {isGlobalUiAdvancedOptions ? langData.textNormalOptions
+                                        : langData.textAdvancedOptions}
                                 </ButtonRendererView>
                             </SectionButtons>
                         </Section>
