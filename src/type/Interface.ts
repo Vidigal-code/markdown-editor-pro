@@ -1,6 +1,7 @@
 
 export type View = 'editor' | 'preview' | 'both';
 
+export type Language = 'en' | 'pt' | 'es'; // add lang here
 
 export interface TranslationData {
     textAreaPlaceholderEditor: string;
@@ -45,7 +46,6 @@ export interface TextExamples {
     textClean: string;
 }
 
-export type Language = 'en' | 'pt' | 'es'; // add lang here
 
 export interface Example {
     id: number;
@@ -61,7 +61,7 @@ export interface ExampleCategory {
 }
 
 export interface ExampleListProps {
-    language: 'en' | 'pt' | 'es';
+    language: Language;
     examples: ExampleCategory[];
     onSelect: (example: Example) => void;
 }
@@ -73,14 +73,14 @@ export interface PreviewProps {
 
 
 export interface EditorProps {
-    language: 'en' | 'pt' | 'es';
+    language: Language;
     markdown: string;
     onChange: (value: string) => void;
     isDarkMode?: boolean;
 }
 
 export interface NavbarProps {
-    language: 'en' | 'pt' | 'es';
+    language: Language;
     onChangeLanguage: (lang: Language) => void;
     isDarkMode: boolean;
     onToggleisDarkMode: () => void;
@@ -88,7 +88,7 @@ export interface NavbarProps {
 
 export interface ExampleListCustomProps extends ExampleListProps {
     markdown: string;
-    language: 'en' | 'pt' | 'es';
+    language: Language;
 }
 
 export interface ThemeProps {
@@ -115,7 +115,7 @@ export interface Category {
 }
 
 export interface RandomExampleSelectorProps {
-    language: 'en' | 'pt' | 'es';
+    language: Language;
     examples: Array<{
         id: number;
         category: string;
