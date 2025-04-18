@@ -8,6 +8,8 @@ export const bothView: View = 'both';
 export type Language = 'en' | 'pt' | 'es'; // add lang here
 
 export interface TranslationData {
+    textMessageExampleList: string;
+    textMessageCustomExampleList: string;
     textErrorGitHubUserRequired: string;
     textErrorReadmeNotFound: string;
     textSelectMarkdownFile: string;

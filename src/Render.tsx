@@ -613,13 +613,10 @@ const Render: React.FC = () => {
                         ) : (
                             <>
                                 <Section>
-                                    <ExampleList
-                                        language={language}
-                                        examples={examples}
-                                        onSelect={handleExampleSelect}
-                                    />
+                                    <SectionTitle>{langData.textMessageCustomExampleList}</SectionTitle>
                                     <div style={{marginTop: '1rem'}}>
-                                        <RandomExampleSelector
+                                        <ExampleListCustom
+                                            markdown={markdown}
                                             examples={examples}
                                             onSelect={handleExampleSelect}
                                             language={language}
@@ -627,9 +624,14 @@ const Render: React.FC = () => {
                                     </div>
                                 </Section>
                                 <Section>
+                                    <SectionTitle>{langData.textMessageExampleList}</SectionTitle>
+                                    <ExampleList
+                                        language={language}
+                                        examples={examples}
+                                        onSelect={handleExampleSelect}
+                                    />
                                     <div style={{marginTop: '1rem'}}>
-                                        <ExampleListCustom
-                                            markdown={markdown}
+                                        <RandomExampleSelector
                                             examples={examples}
                                             onSelect={handleExampleSelect}
                                             language={language}

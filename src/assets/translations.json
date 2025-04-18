@@ -5,6 +5,8 @@
       "en": "English",
       "es": "Spanish"
     },
+    "textMessageExampleList": "List of Examples",
+    "textMessageCustomExampleList": "Custom Examples List",
     "textErrorGitHubUserRequired": "GitHub username is required.",
     "textErrorReadmeNotFound": "README not found or repository does not exist",
     "textSelectMarkdownFile": "Please select a Markdown (.md) file.",
@@ -239,6 +241,8 @@
       "en": "Inglês",
       "es": "Espanhol"
     },
+    "textMessageExampleList": "Lista de exemplos",
+    "textMessageCustomExampleList": "Lista de exemplos personalizados",
     "textErrorGitHubUserRequired": "O nome de usuário do GitHub é obrigatório.",
     "textErrorReadmeNotFound": "README não encontrado ou repositório não existe.",
     "textSelectMarkdownFile": "Por favor, selecione um arquivo Markdown (.md).",
@@ -473,6 +477,8 @@
       "en": "Inglés",
       "es": "Español"
     },
+    "textMessageExampleList": "Lista de ejemplos",
+    "textMessageCustomExampleList": "Lista de ejemplos personalizada",
     "textErrorGitHubUserRequired": "Se requiere el nombre de usuario de GitHub.",
     "textErrorReadmeNotFound": "README no encontrado o el repositorio no existe.",
     "textSelectMarkdownFile": "Por favor, seleccione un archivo Markdown (.md).",
