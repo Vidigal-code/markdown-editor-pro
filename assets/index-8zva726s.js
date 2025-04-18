@@ -1261,9 +1261,10 @@ Contáctenos en [soporte@example.com](mailto:soporte@example.com).`,"example-fil
 
 `,Ls=_e(ac)`
     background: ${({theme:e})=>e.secondary};
-    color: ${({theme:e})=>e.text};
+    color: ${({theme:e})=>e.codeText};
 
     &:hover {
+        color: black;
         background: #cbd5e1;
     }
 `,vL=_e.div`
