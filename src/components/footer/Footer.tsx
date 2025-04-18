@@ -90,7 +90,7 @@ export default function Footer({ isDarkMode }: FooterProps) {
             <FooterLeft>
                 <FooterText $theme={currentTheme}>
                     © {currentYear} Markdown Editor Pro
-                    <span style={{marginLeft: '5px', color: '#fff'}}>
+                    <span style={{marginLeft: '5px', color: isDarkMode ? 'black' : 'white'}}>
                         By
                          <FooterLink $theme={currentTheme} style={{marginLeft: '5px', color: isDarkMode ? 'black' : 'white'}} href="https://github.com/Vidigal-code"
                                      target="_blank">
