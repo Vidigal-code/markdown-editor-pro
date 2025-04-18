@@ -283,19 +283,20 @@ const ExampleListCustom: React.FC<ExampleListCustomProps> = ({
     return (
         <ExampleListContainer>
 
-            <Button
-                onClick={() => setEdit(!isEdit)}>{isEdit ? langData.textExamples.textSaveEdit : langData.textExamples.textEdit}</Button>
+            <ButtonContainer style={{marginBottom: '35px'}}>
+                <Button
+                    onClick={() => setEdit(!isEdit)}>{isEdit ? langData.textExamples.textSaveEdit : langData.textExamples.textEdit}</Button>
 
 
-            {isEdit ? (<>
-                <Button onClick={() => setShowAddCategory(true)}>{langData?.textExamples.textAddCategory}</Button>
-            </>) : (
-                <>
-                    <Button onClick={AllCacheExample}>{langData?.textExamples.textAllExamples}</Button>
-                    <Button onClick={Clean}>{langData?.textExamples.textClean}</Button>
-                </>
-            )}
-
+                {isEdit ? (<>
+                    <Button onClick={() => setShowAddCategory(true)}>{langData?.textExamples.textAddCategory}</Button>
+                </>) : (
+                    <>
+                        <Button onClick={AllCacheExample}>{langData?.textExamples.textAllExamples}</Button>
+                        <Button onClick={Clean}>{langData?.textExamples.textClean}</Button>
+                    </>
+                )}
+            </ButtonContainer>
 
             {showAddCategory && (
                 <FormContainer>
