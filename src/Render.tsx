@@ -261,9 +261,10 @@ const PrimaryButton = styled.button`
 
 const SecondaryButton = styled(PrimaryButton)`
     background: ${({theme}) => theme.secondary};
-    color: ${({theme}) => theme.text};
+    color: ${({theme}) => theme.codeText};
 
     &:hover {
+        color: black;
         background: #cbd5e1;
     }
 `;
