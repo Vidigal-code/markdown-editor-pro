@@ -885,7 +885,7 @@ Contáctenos en [soporte@example.com](mailto:soporte@example.com).`,"example-fil
     align-items: center;
     justify-content: flex-end;
     flex: 1;
-`;function aL({isDarkMode:e}){const t=new Date().getFullYear(),r=e?Mh:_c;return q.jsxs(eL,{$theme:r,children:[q.jsx(tL,{children:q.jsxs(Eb,{$theme:r,children:["© ",t," Markdown Editor Pro",q.jsxs("span",{style:{marginLeft:"5px",color:"#fff"},children:["By",q.jsx(bb,{$theme:r,style:{marginLeft:"5px",color:e?"black":"white"},href:"https://github.com/Vidigal-code",target:"_blank",children:"Vidigal-code"})]})]})}),q.jsx(nL,{children:q.jsx(Eb,{$theme:r,children:q.jsx(bb,{style:{marginLeft:"5px",color:e?"black":"white"},$theme:r,href:"https://github.com/Vidigal-code/markdown-editor-pro",target:"_blank",children:"Documentation"})})})]})}const rL="editor",uL="preview",iL="both",lL=_e.div`
+`;function aL({isDarkMode:e}){const t=new Date().getFullYear(),r=e?Mh:_c;return q.jsxs(eL,{$theme:r,children:[q.jsx(tL,{children:q.jsxs(Eb,{$theme:r,children:["© ",t," Markdown Editor Pro",q.jsxs("span",{style:{marginLeft:"5px",color:e?"black":"white"},children:["By",q.jsx(bb,{$theme:r,style:{marginLeft:"5px",color:e?"black":"white"},href:"https://github.com/Vidigal-code",target:"_blank",children:"Vidigal-code"})]})]})}),q.jsx(nL,{children:q.jsx(Eb,{$theme:r,children:q.jsx(bb,{style:{marginLeft:"5px",color:e?"black":"white"},$theme:r,href:"https://github.com/Vidigal-code/markdown-editor-pro",target:"_blank",children:"Documentation"})})})]})}const rL="editor",uL="preview",iL="both",lL=_e.div`
     border-radius: 4px;
     padding: 15px;
     max-height: 400px;
