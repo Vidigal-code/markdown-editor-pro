@@ -549,6 +549,12 @@ const Render: React.FC = () => {
                     onToggleisDarkMode={toggleisDarkMode}
                 />
                 <Content>
+                    {messageError != null && (
+                        <ToolbarContainer>
+                            <Section style={{border: 'none', boxShadow: 'none', background:'#ec5353'}}>
+                                <span style={{color: 'white'}}>{messageError}</span>
+                            </Section>
+                        </ToolbarContainer>)}
                     <ToolbarContainer>
                         {!isGlobalUiAdvancedOptions ? (
                             <>
@@ -633,12 +639,6 @@ const Render: React.FC = () => {
                             </>
                         )}
                     </ToolbarContainer>
-                    {messageError != null && (
-                        <ToolbarContainer>
-                            <Section style={{border: 'none', backgroundColor: 'none'}}>
-                                <span style={{color: 'red'}}>{messageError}</span>
-                            </Section>
-                        </ToolbarContainer>)}
                     <ToolbarContainer>
                         <Section>
                             <SectionTitle>{langData.textViewMode}</SectionTitle>
