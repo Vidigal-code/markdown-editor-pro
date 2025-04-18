@@ -3,10 +3,13 @@ import {Language, NavbarProps} from "../../type/Interface.ts";
 import {useNavigate} from "react-router-dom";
 import translations from "../../assets/translations.json";
 import React, {useEffect, useRef} from "react";
-import { FaLightbulb } from "react-icons/fa6";
-import { FaRegLightbulb } from "react-icons/fa6";
+import {FaLightbulb} from "react-icons/fa6";
+import {FaRegLightbulb} from "react-icons/fa6";
+import {useGlobalAdvancedOptions} from "../../type/context/GlobalUIAdvancedOptions.tsx";
+import {darkTheme, lightTheme} from "../../type/themes.ts";
 
-const HeaderContainer = styled.header`
+
+const HeaderContainer = styled.header<{ $theme: any }>`
     position: fixed;
     top: 0;
     left: 0;
@@ -15,13 +18,13 @@ const HeaderContainer = styled.header`
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background: #000;
-    color: white;
+    background: ${({$theme}) => $theme.backgroundheader};
+    color: ${({$theme}) => $theme.text};
     font-family: Arial, sans-serif;
     z-index: 1000;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
+    //box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    //border-bottom-left-radius: 10px;
+    //border-bottom-right-radius: 10px;
 
     @media (max-width: 768px) {
         flex-direction: column;
@@ -40,16 +43,16 @@ const HeaderContainer = styled.header`
     }
 `;
 
-const Title = styled.h1`
+const Title = styled.h1<{ $theme: any }>`
     margin: 0;
     font-size: 24px;
     font-weight: bold;
-    color: #ffffff;
+    color: ${({$theme}) => $theme.text};
     transition: transform 0.3s ease, color 0.3s ease;
 
     &:hover {
         transform: scale(1.05);
-        color: #f0f0f0;
+        color: ${({$theme}) => ($theme === darkTheme ? "#f0f0f0" : $theme.primary)};
     }
 
     @media (max-width: 768px) {
@@ -75,36 +78,7 @@ const ControlsContainer = styled.div`
     }
 `;
 
-
-const Button = styled.button`
-    padding: 8px 16px;
-    border: 2px solid #ffffff;
-    border-radius: 8px;
-    background-color: transparent;
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-    &:hover {
-        background-color: #ffffff;
-        color: #000000;
-        transform: scale(1.05);
-    }
-
-    &:active {
-        transform: scale(0.95);
-    }
-
-    @media (max-width: 280px) {
-        padding: 6px 12px;
-        font-size: 12px;
-    }
-`;
-
-
-const SelectContainer = styled.div<{ $isDarkMode: boolean }>`
+const SelectContainer = styled.div<{ $theme: any }>`
     position: relative;
     width: 100%;
     max-width: 300px;
@@ -116,8 +90,7 @@ const SelectContainer = styled.div<{ $isDarkMode: boolean }>`
     }
 `;
 
-
-const SelectButton = styled.div<{ $isDarkMode: boolean }>`
+const SelectButton = styled.div<{ $theme: any }>`
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -128,11 +101,9 @@ const SelectButton = styled.div<{ $isDarkMode: boolean }>`
     cursor: pointer;
     transition: all 0.6s ease-in-out;
 
-
     background-color: transparent;
-    color: #ffffff;
-    border: 2px solid #ffffff;
-
+    color: ${({$theme}) => $theme.text};
+    border: 2px solid ${({$theme}) => $theme.text};
 
     @media screen and (max-width: 280px) {
         padding: 6px 12px;
@@ -141,22 +112,22 @@ const SelectButton = styled.div<{ $isDarkMode: boolean }>`
     }
 `;
 
-const SelectArrow = styled.div<{ $isDarkMode: boolean; $isOpen: boolean }>`
+const SelectArrow = styled.div<{ $theme: any; $isOpen: boolean }>`
     width: 0;
     height: 0;
     border-left: 6px solid transparent;
     border-right: 6px solid transparent;
-    border-top: 6px solid ${({$isDarkMode}) => (!$isDarkMode ? "#fff" : "#fff")};
+    border-top: 6px solid ${({$theme}) => $theme.text};
     transform: ${({$isOpen}) => ($isOpen ? 'rotate(180deg)' : 'rotate(0)')};
     transition: transform 0.3s ease;
     margin-left: 10px;
 
     ${SelectButton}:hover & {
-        border-top-color: ${({theme}) => theme.linka};
+        border-top-color: ${({$theme}) => $theme.primary};
     }
 `;
 
-const DropdownList = styled.ul<{ $isDarkMode: boolean; $isOpen: boolean }>`
+const DropdownList = styled.ul<{ $theme: any; $isOpen: boolean }>`
     position: absolute;
     top: 100%;
     left: 0;
@@ -167,41 +138,41 @@ const DropdownList = styled.ul<{ $isDarkMode: boolean; $isOpen: boolean }>`
     padding: 0;
     list-style: none;
     border-radius: 8px;
-    background-color: ${({$isDarkMode}) => ($isDarkMode ? "#000" : "#fff")};
+    background-color: ${({$theme}) => $theme.secondary};
     z-index: 50;
     display: ${({$isOpen}) => ($isOpen ? 'block' : 'none')};
     text-align: center;
-    border: 2px solid ${({$isDarkMode}) => (!$isDarkMode ? "#fff" : "#000")};
+    border: 2px solid ${({$theme}) => $theme.border};
 
     &::-webkit-scrollbar {
         width: 8px;
     }
 
     &::-webkit-scrollbar-track {
-        background: ${({$isDarkMode}) => ($isDarkMode ? "#333" : "#eee")};
+        background: ${({$theme}) => $theme.scrollbarTrack};
     }
 
     &::-webkit-scrollbar-thumb {
-        background: ${({$isDarkMode}) => ($isDarkMode ? "#666" : "#ccc")};
+        background: ${({$theme}) => $theme.scrollbarThumb};
         border-radius: 4px;
     }
 `;
 
-const DropdownItem = styled.li<{ $isDarkMode: boolean }>`
+const DropdownItem = styled.li<{ $theme: any }>`
     padding: 10px 20px;
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    color: ${({$isDarkMode}) => ($isDarkMode ? "#fff" : "#000")};
-    background: ${({$isDarkMode}) => ($isDarkMode ? "#000" : "#fff")};
+    color: ${({$theme}) => $theme.text};
+    background: ${({$theme}) => $theme.secondary};
     list-style: none;
 
     position: relative;
 
     &:hover {
-        background: ${({$isDarkMode}) => ($isDarkMode ? "#fff" : "#000")};
-        color: ${({$isDarkMode}) => ($isDarkMode ? "#000" : "#fff")};
+        background: ${({$theme}) => $theme.primary};
+        color: ${({$theme}) => $theme.background};
     }
 
     &:not(:last-child)::after {
@@ -210,7 +181,7 @@ const DropdownItem = styled.li<{ $isDarkMode: boolean }>`
         bottom: 0;
         left: 0;
         width: 100%;
-        border-bottom: 2px solid ${({$isDarkMode}) => ($isDarkMode ? '#fff' : '#000')};
+        border-bottom: 2px solid ${({$theme}) => $theme.border};
     }
 
     @media (max-width: 280px) {
@@ -229,13 +200,21 @@ export default function Header({language, onChangeLanguage, isDarkMode, onToggle
 
 
     const [isOpenLang, setIsOpenLang] = React.useState(false);
+    const [isOptions, setIsOptions] = React.useState(false);
 
-    const selectRef = useRef<HTMLDivElement>(null);
+    const selectRefLang = useRef<HTMLDivElement>(null);
+    const selectRefOptions = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
+            const target = event.target as Node;
+
+            if (selectRefLang.current && !selectRefLang.current.contains(target)) {
                 setIsOpenLang(false);
+            }
+
+            if (selectRefOptions.current && !selectRefOptions.current.contains(target)) {
+                setIsOptions(false);
             }
         };
 
@@ -246,25 +225,30 @@ export default function Header({language, onChangeLanguage, isDarkMode, onToggle
     }, []);
 
 
+    const {isGlobalUiAdvancedOptions, setGlobalUiAdvancedOptions} = useGlobalAdvancedOptions();
+
+    const currentTheme = !isDarkMode ? darkTheme : lightTheme;
+
+
     return (
-        <HeaderContainer>
-            <Title>Markdown Editor Pro</Title>
+        <HeaderContainer $theme={currentTheme}>
+            <Title $theme={currentTheme}>Markdown Editor Pro</Title>
             <nav>
                 <ControlsContainer>
-                    <SelectContainer $isDarkMode={isDarkMode} ref={selectRef}>
+                    <SelectContainer $theme={currentTheme} ref={selectRefLang}>
                         <SelectButton
-                            $isDarkMode={isDarkMode}
+                            $theme={currentTheme}
                             onClick={() => setIsOpenLang(!isOpenLang)}
                         >
                             {langData.menu?.[language as keyof typeof translations]}
-                            <SelectArrow $isDarkMode={isDarkMode} $isOpen={isOpenLang}/>
+                            <SelectArrow $theme={currentTheme} $isOpen={isOpenLang}/>
                         </SelectButton>
 
-                        <DropdownList $isDarkMode={false} $isOpen={isOpenLang}>
+                        <DropdownList $theme={currentTheme} $isOpen={isOpenLang}>
                             {Object.entries(translations[language as keyof typeof translations].menu).map(([code, label]) => (
                                 <DropdownItem
+                                    $theme={currentTheme}
                                     key={code}
-                                    $isDarkMode={true}
                                     onClick={() => {
                                         onChangeLanguage(code as Language);
                                         setIsOpenLang(false);
@@ -275,11 +259,40 @@ export default function Header({language, onChangeLanguage, isDarkMode, onToggle
                             ))}
                         </DropdownList>
                     </SelectContainer>
-                    <Button onClick={onToggleisDarkMode}>
-                        {isDarkMode ?  <FaRegLightbulb/>
-                            : <FaLightbulb />}
-                    </Button>
-                    <Button onClick={() => navigate('/')}>{langData.textBack}</Button>
+                    <SelectContainer $theme={currentTheme} ref={selectRefOptions}>
+                        <SelectButton
+                            $theme={currentTheme}
+                            onClick={() => setIsOptions(!isOptions)}
+                        >
+                            {langData.textOptions}
+                            <SelectArrow $theme={currentTheme} $isOpen={isOptions}/>
+                        </SelectButton>
+
+                        <DropdownList $theme={currentTheme} $isOpen={isOptions}>
+                            <DropdownItem
+                                $theme={currentTheme}
+                                onClick={onToggleisDarkMode}
+                            >
+                                {isDarkMode ? <FaRegLightbulb/>
+                                    : <FaLightbulb/>}
+                            </DropdownItem>
+                            <DropdownItem
+                                $theme={currentTheme}
+                                onClick={() => setGlobalUiAdvancedOptions(!isGlobalUiAdvancedOptions)}
+                            >
+                                {isGlobalUiAdvancedOptions ? langData.textNormalOptions
+                                    : langData.textAdvancedOptions}
+                            </DropdownItem>
+                            <DropdownItem
+                                $theme={currentTheme}
+                                onClick={() => {
+                                    navigate('/');
+                                }}
+                            >
+                                {langData.textBack}
+                            </DropdownItem>
+                        </DropdownList>
+                    </SelectContainer>
                 </ControlsContainer>
             </nav>
         </HeaderContainer>

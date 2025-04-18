@@ -5,7 +5,6 @@ import DOMPurify from 'dompurify';
 import translations from "../../assets/translations.json";
 
 const ExampleListContainer = styled.div<ThemeProps>`
-    border: 1px solid ${(props) => props.theme.border};
     border-radius: 4px;
     padding: 15px;
     max-height: 400px;
@@ -13,7 +12,7 @@ const ExampleListContainer = styled.div<ThemeProps>`
     background: ${(props) => props.theme.background};
     text-align: center;
     scrollbar-width: thin;
-    scrollbar-color: ${(props) => props.theme.scrollbarThumb} ${(props) => props.theme.scrollbarTrack}; 
+    scrollbar-color: ${(props) => props.theme.scrollbarThumb} ${(props) => props.theme.scrollbarTrack}; /* para Firefox */
 
     ::-webkit-scrollbar {
         width: 8px;

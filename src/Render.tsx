@@ -7,11 +7,21 @@ import ExampleList from "./components/example/ExampleList.tsx";
 import styled, {ThemeProvider} from 'styled-components';
 import {lightTheme, darkTheme, GlobalStyles} from './type/themes.ts';
 import Footer from "./components/footer/Footer.tsx";
-import {Example, ExampleCategory, TranslationData, Language, View} from "./type/Interface.ts";
+import {
+    Example,
+    ExampleCategory,
+    TranslationData,
+    Language,
+    View,
+    previewView,
+    bothView,
+    editorView
+} from "./type/Interface.ts";
 import ExampleListCustom from "./components/example/ExampleListCustom.tsx";
 import RandomExampleSelector from "./components/example/RandomExampleSelector.tsx";
 import DOMPurify from 'dompurify';
 import {API_GITHUB, API_GITHUB_FINAL_MASTER} from "./api/api.ts";
+import {useGlobalAdvancedOptions} from "./type/context/GlobalUIAdvancedOptions.tsx";
 
 const Container = styled.div`
     display: flex;
@@ -24,7 +34,7 @@ const Container = styled.div`
     box-sizing: border-box;
 `;
 
-const ContainerFooter = styled.div`
+const SeparatorFooter = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -41,11 +51,12 @@ const Content = styled.div`
     justify-content: space-between;
     width: 100%;
     max-width: 1200px;
-    margin-top: 20px;
+    margin-top: 62px;
     gap: 20px;
     margin-bottom: 20px;
 
     @media (max-width: 768px) {
+        margin-top: 80px;
         flex-direction: column;
     }
 `;
@@ -63,16 +74,6 @@ const EditorPreviewContainer = styled.div`
     }
 `;
 
-const SidePanel = styled.div`
-    width: 250px;
-    flex-shrink: 0;
-
-    @media (max-width: 768px) {
-        width: 100%;
-    }
-`;
-
-
 const mediaQueries = {
     phone: "(max-width: 640px)",
     tablet: "(max-width: 1024px)",
@@ -80,41 +81,6 @@ const mediaQueries = {
     landscape: "(orientation: landscape) and (max-height: 640px)",
 };
 
-const Wrapper = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    max-width: 1280px;
-    margin-top: 25px;
-    background: ${({theme}) => theme.background};
-    color: ${({theme}) => theme.text};
-
-    @media ${mediaQueries.tablet} {
-        margin-top: 45px;
-        gap: 16px;
-        padding: 16px;
-    }
-
-    @media ${mediaQueries.phone} {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 12px;
-        padding: 12px;
-    }
-
-    @media ${mediaQueries.fold} {
-        gap: 8px;
-        padding: 8px;
-    }
-
-    @media ${mediaQueries.landscape} {
-        flex-direction: row;
-        justify-content: space-around;
-    }
-`;
 
 const ToolbarContainer = styled.div`
     display: flex;
@@ -361,12 +327,14 @@ const Render: React.FC = () => {
     const [markdown, setMarkdown] = useState<string>('');
     const [history, setHistory] = useState<string[]>([]);
     const [currentHistoryIndex, setCurrentHistoryIndex] = useState<number>(-1);
+    const [messageError, setMessageError] = useState<string | null>(null);
 
 
     const [isDarkMode, setisDarkMode] = useState<boolean>(() => {
         const savedisDarkMode = localStorage.getItem('isDarkMode');
         return savedisDarkMode ? JSON.parse(savedisDarkMode) : false;
     });
+
 
     const toggleisDarkMode = (): void => {
         setisDarkMode((prev) => {
@@ -375,7 +343,6 @@ const Render: React.FC = () => {
             return newisDarkMode;
         });
     };
-
 
     const [filename, setFilename] = useState<string>('README.md');
     const [githubUsername, setGithubUsername] = useState<string>('');
@@ -391,13 +358,6 @@ const Render: React.FC = () => {
     const handleLanguageChange = (lang: Language): void => {
         setLanguage(lang);
         localStorage.setItem('language', lang);
-
-        const initialExample = langData?.examples[0]?.items[0];
-        const initialMarkdown = initialExample?.["example-text"] || '';
-
-        setMarkdown(initialMarkdown);
-        addToHistory(initialMarkdown);
-        setExamples(langData?.examples || []);
     };
 
     const langData = translations[language] as TranslationData;
@@ -447,9 +407,12 @@ const Render: React.FC = () => {
         document.body.removeChild(element);
     };
 
-
     const fetchGithubMarkdown = async (): Promise<void> => {
-        if (!githubUsername) return;
+        if (!githubUsername) {
+            setMessageError(langData.textErrorGitHubUserRequired);
+            setTimeout(() => setMessageError(null), 2000);
+            return;
+        }
 
         const url: string = `${API_GITHUB}${githubUsername}/${githubUsername}/${API_GITHUB_FINAL_MASTER}`;
 
@@ -465,10 +428,12 @@ const Render: React.FC = () => {
                 setMarkdown(sanitizedContent);
                 addToHistory(sanitizedContent);
             })
-            .catch(error => {
-                alert(`Error: ${(error as Error).message}`);
+            .catch(() => {
+                setMessageError(langData.textErrorReadmeNotFound);
+                setTimeout(() => setMessageError(null), 2000);
             });
     };
+
 
     const handleExampleSelect = (example: Example): void => {
         if (example["example-text"]) {
@@ -495,10 +460,6 @@ const Render: React.FC = () => {
     };
 
 
-    const editorView = 'editor';
-    const previewView = 'preview';
-    const bothView = 'both';
-
     const togglePreview = (): void => {
         setSelectedView(previewView);
     };
@@ -523,7 +484,8 @@ const Render: React.FC = () => {
         if (!file) return;
 
         if (!file.name.endsWith('.md')) {
-            alert('Please select a Markdown (.md) file.');
+            setMessageError(langData.textSelectMarkdownFile);
+            setTimeout(() => setMessageError(null), 2000);
             return;
         }
 
@@ -552,16 +514,11 @@ const Render: React.FC = () => {
     };
 
     useEffect(() => {
-
-
-        const initialExample = langData?.examples[0]?.items[0];
-        const initialMarkdown = initialExample?.["example-text"] || '';
-
-        setMarkdown(initialMarkdown);
-        addToHistory(initialMarkdown);
         setExamples(langData?.examples || []);
+    }, [langData.examples]);
 
-    }, [language]);
+    const {isGlobalUiAdvancedOptions} = useGlobalAdvancedOptions();
+
 
     return (
         <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
@@ -574,90 +531,112 @@ const Render: React.FC = () => {
                     onToggleisDarkMode={toggleisDarkMode}
                 />
                 <Content>
-                    <Wrapper>
+                    <ToolbarContainer>
+                        {!isGlobalUiAdvancedOptions ? (
+                            <>
+                                <Section>
+                                    <SectionTitle>{langData.textFileManagement}</SectionTitle>
+                                    <InputGroup>
+                                        <Input
+                                            placeholder={langData.textFilenamePlaceholder}
+                                            value={filename}
+                                            onChange={(e) => setFilename(e.target.value)}
+                                        />
+                                        <PrimaryButton onClick={handleDownload}>
+                                            {langData.textDownload}
+                                        </PrimaryButton>
+                                    </InputGroup>
+                                </Section>
+                                <Section>
+                                    <SectionTitle>{langData.textGitHubIntegration}</SectionTitle>
+                                    <InputGroup>
+                                        <Input
+                                            placeholder={langData.textGitHubUsername}
+                                            value={githubUsername}
+                                            onChange={(e) => setGithubUsername(e.target.value)}
+                                        />
+                                        <PrimaryButton onClick={fetchGithubMarkdown}>
+                                            {langData.textFetchREADME}
+                                        </PrimaryButton>
+                                    </InputGroup>
+                                </Section>
+                                <Section>
+                                    <SectionTitle>{langData.textEditorActions}</SectionTitle>
+                                    <InputGroup>
+                                        <SecondaryButton onClick={handleUndo} disabled={currentHistoryIndex <= 0}>
+                                            {langData.textUndo}
+                                        </SecondaryButton>
+                                        <SecondaryButton onClick={handleRedo}
+                                                         disabled={currentHistoryIndex >= history.length - 1}>
+                                            {langData.textRedo}
+                                        </SecondaryButton>
+                                        <SecondaryButton onClick={handleClean}>
+                                            {langData.textClean}
+                                        </SecondaryButton>
+                                        <SecondaryButton onClick={() => inputFileRef.current?.click()}>
+                                            {langData.textUpload}
+                                        </SecondaryButton>
+                                        <Input
+                                            type="file"
+                                            accept=".md,text/markdown,text/x-markdown"
+                                            style={{display: 'none'}}
+                                            ref={inputFileRef}
+                                            onChange={handleFileUpload}
+                                        />
+                                    </InputGroup>
+                                </Section>
+                            </>
+                        ) : (
+                            <>
+                                <Section>
+                                    <ExampleList
+                                        language={language}
+                                        examples={examples}
+                                        onSelect={handleExampleSelect}
+                                    />
+                                    <div style={{marginTop: '1rem'}}>
+                                        <RandomExampleSelector
+                                            examples={examples}
+                                            onSelect={handleExampleSelect}
+                                            language={language}
+                                        />
+                                    </div>
+                                </Section>
+                                <Section>
+                                    <div style={{marginTop: '1rem'}}>
+                                        <ExampleListCustom
+                                            markdown={markdown}
+                                            examples={examples}
+                                            onSelect={handleExampleSelect}
+                                            language={language}
+                                        />
+                                    </div>
+                                </Section>
+                            </>
+                        )}
+                    </ToolbarContainer>
+                    {messageError != null && (
                         <ToolbarContainer>
-                            <Section>
-                                <SectionTitle>{langData.textFileManagement}</SectionTitle>
-                                <InputGroup>
-                                    <Input
-                                        placeholder={langData.textFilenamePlaceholder}
-                                        value={filename}
-                                        onChange={(e) => setFilename(e.target.value)}
-                                    />
-                                    <PrimaryButton onClick={handleDownload}>{langData.textDownload}</PrimaryButton>
-                                </InputGroup>
+                            <Section style={{border: 'none', backgroundColor: 'none'}}>
+                                <span style={{color: 'red'}}>{messageError}</span>
                             </Section>
-
-                            <Section>
-                                <SectionTitle>{langData.textGitHubIntegration}</SectionTitle>
-                                <InputGroup>
-                                    <Input
-                                        placeholder={langData.textGitHubUsername}
-                                        value={githubUsername}
-                                        onChange={(e) => setGithubUsername(e.target.value)}
-                                    />
-                                    <PrimaryButton
-                                        onClick={fetchGithubMarkdown}>{langData.textFetchREADME}</PrimaryButton>
-                                </InputGroup>
-                            </Section>
-
-                            <Section>
-                                <SectionTitle>{langData.textEditorActions}</SectionTitle>
-                                <InputGroup>
-                                    <SecondaryButton onClick={handleUndo} disabled={currentHistoryIndex <= 0}>
-                                        {langData.textUndo}
-                                    </SecondaryButton>
-                                    <SecondaryButton onClick={handleRedo}
-                                                     disabled={currentHistoryIndex >= history.length - 1}>
-                                        {langData.textRedo}
-                                    </SecondaryButton>
-                                    <SecondaryButton onClick={handleClean}>{langData.textClean}</SecondaryButton>
-                                    <SecondaryButton onClick={() => inputFileRef.current?.click()}>
-                                        {langData.textUpload}
-                                    </SecondaryButton>
-                                    <Input
-                                        type="file"
-                                        accept=".md,text/markdown,text/x-markdown"
-                                        style={{display: 'none'}}
-                                        ref={inputFileRef}
-                                        onChange={handleFileUpload}
-                                    />
-                                </InputGroup>
-                            </Section>
-
-                            <Section>
-                                <SectionTitle>{langData.textViewMode}</SectionTitle>
-                                <SectionButtons>
-                                    <ButtonRendererView onClick={toggleBoth}>
-                                        {langData.textBoth}
-                                    </ButtonRendererView>
-                                    <ButtonRendererView onClick={togglePreview}>
-                                        {langData.textPreview}
-                                    </ButtonRendererView>
-                                    <ButtonRendererView onClick={toggleEditor}>
-                                        {langData.textEditor}
-                                    </ButtonRendererView>
-                                </SectionButtons>
-                            </Section>
-                        </ToolbarContainer>
-
-                    </Wrapper>
-                    <SidePanel>
-                        <ExampleList language={language}
-                                     examples={examples} onSelect={handleExampleSelect}/>
-                        <div style={{marginTop: '1rem'}}>
-                            <RandomExampleSelector
-                                examples={examples}
-                                onSelect={handleExampleSelect}
-                                language={language}
-                            />
-                        </div>
-                        <div style={{marginTop: '1rem'}}>
-                            <ExampleListCustom markdown={markdown} examples={examples} onSelect={handleExampleSelect}
-                                               language={language}/>
-                        </div>
-                    </SidePanel>
-
+                        </ToolbarContainer>)}
+                    <ToolbarContainer>
+                        <Section>
+                            <SectionTitle>{langData.textViewMode}</SectionTitle>
+                            <SectionButtons>
+                                <ButtonRendererView onClick={toggleBoth}>
+                                    {langData.textBoth}
+                                </ButtonRendererView>
+                                <ButtonRendererView onClick={togglePreview}>
+                                    {langData.textPreview}
+                                </ButtonRendererView>
+                                <ButtonRendererView onClick={toggleEditor}>
+                                    {langData.textEditor}
+                                </ButtonRendererView>
+                            </SectionButtons>
+                        </Section>
+                    </ToolbarContainer>
                     <EditorPreviewContainer>
                         {(selectedView === 'editor' || selectedView === 'both') && (
                             <Editor
@@ -677,9 +656,9 @@ const Render: React.FC = () => {
                     </EditorPreviewContainer>
                 </Content>
             </Container>
-            <ContainerFooter>
-                <Footer/>
-            </ContainerFooter>
+            <SeparatorFooter>
+                <Footer isDarkMode={isDarkMode}/>
+            </SeparatorFooter>
         </ThemeProvider>
     );
 };
