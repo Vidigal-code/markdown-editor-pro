@@ -13,7 +13,7 @@ const ExampleListContainer = styled.div<ThemeProps>`
     background: ${(props) => props.theme.background};
     text-align: center;
     scrollbar-width: thin;
-    scrollbar-color: ${(props) => props.theme.scrollbarThumb} ${(props) => props.theme.scrollbarTrack}; /* para Firefox */
+    scrollbar-color: ${(props) => props.theme.scrollbarThumb} ${(props) => props.theme.scrollbarTrack}; 
 
     ::-webkit-scrollbar {
         width: 8px;
