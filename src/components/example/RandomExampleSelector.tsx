@@ -7,7 +7,6 @@ import translations from "../../assets/translations.json";
 const SelectorContainer = styled.div<ThemeProps>`
     margin-bottom: 20px;
     padding: 15px;
-    border: 1px solid ${(props) => props.theme.border};
     border-radius: 4px;
     background: ${(props) => props.theme.background};
 `;

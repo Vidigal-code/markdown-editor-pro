@@ -5,7 +5,6 @@ import DOMPurify from 'dompurify';
 import translations from "../../assets/translations.json";
 
 const ExampleListContainer = styled.div<ThemeProps>`
-    border: 1px solid ${(props) => props.theme.border};
     border-radius: 4px;
     padding: 15px;
     max-height: 400px;

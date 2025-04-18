@@ -5,7 +5,6 @@ import DOMPurify from 'dompurify';
 import translations from "../../assets/translations.json";
 
 const ExampleListContainer = styled.div<ThemeProps>`
-    border: 1px solid ${(props) => props.theme.border};
     border-radius: 4px;
     padding: 15px;
     max-height: 400px;
@@ -13,7 +12,7 @@ const ExampleListContainer = styled.div<ThemeProps>`
     background: ${(props) => props.theme.background};
     text-align: center;
     scrollbar-width: thin;
-    scrollbar-color: ${(props) => props.theme.scrollbarThumb} ${(props) => props.theme.scrollbarTrack}; 
+    scrollbar-color: ${(props) => props.theme.scrollbarThumb} ${(props) => props.theme.scrollbarTrack};
 
     ::-webkit-scrollbar {
         width: 8px;
@@ -106,6 +105,7 @@ const InputField = styled.input<ThemeProps>`
     width: 90%;
     display: block;
     text-align: center;
+
     &:focus {
         border-color: ${({theme}) => theme.primary};
         outline: none;
@@ -116,7 +116,6 @@ const InputField = styled.input<ThemeProps>`
 const FormContainer = styled.div`
     margin: 15px auto;
     padding: 10px;
-    border: 1px solid ${(props) => props.theme.border};
     border-radius: 4px;
     width: 90%;
     text-align: center;
@@ -141,7 +140,12 @@ const ErrorMessage = styled.div`
 `;
 
 
-const ExampleListCustom: React.FC<ExampleListCustomProps> = ({examples: initialExamples, onSelect, markdown, language}) => {
+const ExampleListCustom: React.FC<ExampleListCustomProps> = ({
+                                                                 examples: initialExamples,
+                                                                 onSelect,
+                                                                 markdown,
+                                                                 language
+                                                             }) => {
 
     const [examples, setExamples] = useState<Category[]>([]);
     const [showAddCategory, setShowAddCategory] = useState(false);
@@ -273,14 +277,25 @@ const ExampleListCustom: React.FC<ExampleListCustomProps> = ({examples: initialE
         setErrorMessage('');
     };
 
+    const [isEdit, setEdit] = React.useState(false);
+
 
     return (
         <ExampleListContainer>
-            <ButtonContainer>
+
+            <Button
+                onClick={() => setEdit(!isEdit)}>{isEdit ? langData.textExamples.textSaveEdit : langData.textExamples.textEdit}</Button>
+
+
+            {isEdit ? (<>
                 <Button onClick={() => setShowAddCategory(true)}>{langData?.textExamples.textAddCategory}</Button>
-                <Button onClick={AllCacheExample}>{langData?.textExamples.textAllExamples}</Button>
-                <Button onClick={Clean}>{langData?.textExamples.textClean}</Button>
-            </ButtonContainer>
+            </>) : (
+                <>
+                    <Button onClick={AllCacheExample}>{langData?.textExamples.textAllExamples}</Button>
+                    <Button onClick={Clean}>{langData?.textExamples.textClean}</Button>
+                </>
+            )}
+
 
             {showAddCategory && (
                 <FormContainer>
@@ -291,10 +306,10 @@ const ExampleListCustom: React.FC<ExampleListCustomProps> = ({examples: initialE
                         value={newCategory}
                         onChange={(e) => setNewCategory(e.target.value)}
                     />
-                    <ButtonContainer>
+                    {isEdit && (<ButtonContainer>
                         <Button onClick={handleAddCategory}>{langData?.textExamples.textSave}</Button>
                         <Button onClick={() => setShowAddCategory(false)}>{langData?.textExamples.textCancel}</Button>
-                    </ButtonContainer>
+                    </ButtonContainer>)}
                 </FormContainer>
             )}
 
@@ -303,8 +318,9 @@ const ExampleListCustom: React.FC<ExampleListCustomProps> = ({examples: initialE
                     <CategoryTitle>
                         {category.category}
                         <div>
-                            <Button onClick={() => setShowAddItem(category.id)}>{langData?.textExamples.textAddItem}</Button>
-                            <DeleteButton onClick={() => handleDeleteCategory(category.id)}>×</DeleteButton>
+                            {isEdit && (<>  <Button
+                                onClick={() => setShowAddItem(category.id)}>{langData?.textExamples.textAddItem}</Button>
+                                <DeleteButton onClick={() => handleDeleteCategory(category.id)}>×</DeleteButton></>)}
                         </div>
                     </CategoryTitle>
 
@@ -321,7 +337,8 @@ const ExampleListCustom: React.FC<ExampleListCustomProps> = ({examples: initialE
                                 <Button onClick={() => handleAddItem(category.id)}>
                                     {langData?.textExamples.textSaveCurrentEditorContent}
                                 </Button>
-                                <Button onClick={() => setShowAddItem(null)}>{langData?.textExamples.textCancel}</Button>
+                                <Button
+                                    onClick={() => setShowAddItem(null)}>{langData?.textExamples.textCancel}</Button>
                             </ButtonContainer>
                         </FormContainer>
                     )}
@@ -333,7 +350,8 @@ const ExampleListCustom: React.FC<ExampleListCustomProps> = ({examples: initialE
                                 onClick={() => handleSelect(item)}
                             >
                                 <span>{item.title}</span>
-                                <DeleteButton onClick={() => handleDeleteItem(category.id, item.id)}>×</DeleteButton>
+                                {isEdit && (<DeleteButton
+                                    onClick={() => handleDeleteItem(category.id, item.id)}>×</DeleteButton>)}
                             </SubListItem>
                         ))}
                     </List>

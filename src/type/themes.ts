@@ -21,38 +21,44 @@ declare module 'styled-components' {
 }
 
 export const lightTheme = {
-    codebackground: '#F0F1F2',
-    prebackground: '#F6F8FA',
+    codebackground: '#f6f8fa',
+    prebackground: '#f6f8fa',
+    backgroundfooter: '#F5F5F5',
+    backgroundheader: '#F5F5F5',
     background: '#ffffff',
-    text: '#000000',
-    primary: '#007bff',
-    secondary: '#d0d7de',
-    border: '#ccc',
-    scrollbar: '#dadada',
-    scrollbarThumb: '#666',
-    scrollbarTrack: '#f0f0f0',
-    blockquote: '#262b32',
+    text: '#24292f',
+    primary: '#0969da',
+    secondary: '#eaeef2',
+    border: '#d0d7de',
+    scrollbar: '#e1e4e8',
+    scrollbarThumb: '#c1c7cd',
+    scrollbarTrack: '#f6f8fa',
+    blockquote: '#57606a',
     codeBackground: '#f6f8fa',
-    codeText: '#24292e',
-    linka:'white',
+    codeText: '#24292f',
+    linka: '#0969da'
 };
 
+
 export const darkTheme = {
-    codebackground: '#1E242A',
-    prebackground: '#151B23',
+    codebackground: '#161b22',
+    prebackground: '#0d1117',
+    backgroundfooter: '#000',
+    backgroundheader: '#000',
     background: '#0d1117',
-    text: '#ffffff',
+    text: '#c9d1d9',
     primary: '#58a6ff',
-    secondary: '#262b32',
+    secondary: '#21262d',
     border: '#30363d',
-    scrollbar: '#24292e',
-    scrollbarThumb: '#8b949e',
-    scrollbarTrack: '#444c56',
-    blockquote: '#d0d7de',
+    scrollbar: '#161b22',
+    scrollbarThumb: '#484f58',
+    scrollbarTrack: '#0d1117',
+    blockquote: '#8b949e',
     codeBackground: '#161b22',
-    codeText: '#f6f8fa',
-    linka:'white',
+    codeText: '#c9d1d9',
+    linka: '#58a6ff'
 };
+
 
 
 export const GlobalStyles = createGlobalStyle`

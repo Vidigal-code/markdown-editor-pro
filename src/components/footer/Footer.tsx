@@ -1,6 +1,7 @@
 import styled from 'styled-components';
+import {darkTheme, lightTheme} from "../../type/themes.ts";
 
-const FooterContainer = styled.footer`
+const FooterContainer = styled.footer<{ $theme: any }>`
     position: fixed;
     bottom: 0;
     left: 0;
@@ -9,13 +10,13 @@ const FooterContainer = styled.footer`
     justify-content: center;
     align-items: center;
     padding: 15px 20px;
-    background: #000;
-    color: white;
+    background: ${({$theme}) => $theme.backgroundfooter};
+    color: ${({ $theme }) => $theme.text};
     font-family: Arial, sans-serif;
     z-index: 1000;
-    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+    //box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
+    //border-top-left-radius: 10px;
+    //border-top-right-radius: 10px;
 
     @media (max-width: 768px) {
         padding: 10px;
@@ -33,9 +34,9 @@ const FooterContainer = styled.footer`
     }
 `;
 
-const FooterText = styled.span`
+const FooterText = styled.span<{ $theme: any }>`
     font-size: 14px;
-    color: #ffffff;
+    color: ${({ $theme }) => $theme.text};
     opacity: 0.9;
     transition: opacity 0.3s ease;
 
@@ -48,17 +49,18 @@ const FooterText = styled.span`
     }
 `;
 
-const FooterLink = styled.a`
-    color: #ffffff;
+const FooterLink = styled.a<{ $theme: any }>`
+    color: ${({ $theme }) => $theme.linka};
     text-decoration: none;
     cursor: pointer;
     transition: all 0.3s ease;
 
     &:hover {
-        color: #f0f0f0;
+        color: ${({ $theme }) => $theme.text};
         text-decoration: underline;
     }
 `;
+
 
 const FooterLeft = styled.div`
     display: flex;
@@ -75,17 +77,22 @@ const FooterRight = styled.div`
 `;
 
 
-export default function Footer() {
+interface FooterProps {
+    isDarkMode: boolean;
+}
+
+export default function Footer({ isDarkMode }: FooterProps) {
     const currentYear = new Date().getFullYear();
+    const currentTheme = !isDarkMode ? darkTheme : lightTheme;
 
     return (
-        <FooterContainer>
+        <FooterContainer $theme={currentTheme}>
             <FooterLeft>
-                <FooterText>
+                <FooterText $theme={currentTheme}>
                     © {currentYear} Markdown Editor Pro
                     <span style={{marginLeft: '5px', color: '#fff'}}>
                         By
-                         <FooterLink style={{marginLeft: '5px', color: '#fff'}} href="https://github.com/Vidigal-code"
+                         <FooterLink $theme={currentTheme} style={{marginLeft: '5px', color: isDarkMode ? 'black' : 'white'}} href="https://github.com/Vidigal-code"
                                      target="_blank">
                          Vidigal-code
                     </FooterLink>
@@ -93,8 +100,8 @@ export default function Footer() {
                 </FooterText>
             </FooterLeft>
             <FooterRight>
-                <FooterText>
-                    <FooterLink href="https://github.com/Vidigal-code/markdown-editor-pro" target="_blank">
+                <FooterText $theme={currentTheme}>
+                    <FooterLink style={{marginLeft: '5px', color: isDarkMode ? 'black' : 'white'}} $theme={currentTheme} href="https://github.com/Vidigal-code/markdown-editor-pro" target="_blank">
                         Documentation
                     </FooterLink>
                 </FooterText>

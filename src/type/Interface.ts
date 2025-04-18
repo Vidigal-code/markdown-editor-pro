@@ -1,9 +1,19 @@
 
 export type View = 'editor' | 'preview' | 'both';
 
+export const editorView: View = 'editor';
+export const previewView: View = 'preview';
+export const bothView: View = 'both';
+
 export type Language = 'en' | 'pt' | 'es'; // add lang here
 
 export interface TranslationData {
+    textErrorGitHubUserRequired: string;
+    textErrorReadmeNotFound: string;
+    textSelectMarkdownFile: string;
+    textAdvancedOptions: string;
+    textNormalOptions: string;
+    textOptions: string;
     textAreaPlaceholderEditor: string;
     textBack: string;
     textGitHubUsername: string;
@@ -26,6 +36,8 @@ export interface TranslationData {
 }
 
 export interface TextExamples {
+    textEdit: string;
+    textSaveEdit: string;
     textSelected: string;
     textCategory: string;
     textSave: string;
