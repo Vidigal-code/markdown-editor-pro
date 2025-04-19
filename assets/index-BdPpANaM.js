@@ -822,8 +822,7 @@ Contáctenos en [soporte@example.com](mailto:soporte@example.com).`,"example-fil
         transform: translateX(3px);
     }
 `,JD=({examples:e,onSelect:t,language:r})=>{const i=wr[r];if(!e||!Array.isArray(e))return Y.jsx(Eb,{children:Y.jsx("div",{children:i.textExamples.textNoexamplesAvailable})});const o=s=>{const c={...s,"example-file":ia.sanitize(s["example-file"]||s["example-text"])};t(c)};return Y.jsx(Eb,{children:e.map(s=>Y.jsxs("div",{children:[Y.jsx($D,{children:s.category}),Y.jsx(KD,{children:s.items.map(c=>Y.jsx(WD,{onClick:()=>o(c),children:c.title},`example-${c.id}`))})]},`category-${s.id}`))})},eL=_e.footer`
-    position: fixed;
-    bottom: 0;
+    position: absolute;
     left: 0;
     right: 0;
     display: flex;
