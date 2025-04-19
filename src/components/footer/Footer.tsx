@@ -2,8 +2,7 @@ import styled from 'styled-components';
 import {darkTheme, lightTheme} from "../../type/themes.ts";
 
 const FooterContainer = styled.footer<{ $theme: any }>`
-    position: fixed;
-    bottom: 0;
+    position: absolute;
     left: 0;
     right: 0;
     display: flex;
