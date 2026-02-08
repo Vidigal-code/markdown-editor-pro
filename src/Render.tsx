@@ -1,12 +1,27 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useRef} from 'react';
+import {ThemeProvider} from 'styled-components';
 import translations from './assets/translations.json';
 import Editor from './components/editor/Editor.tsx';
 import Preview from './components/preview/Preview.tsx';
 import Header from './components/header/Header.tsx';
 import ExampleList from "./components/example/ExampleList.tsx";
-import styled, {ThemeProvider} from 'styled-components';
 import {lightTheme, darkTheme, GlobalStyles} from './type/themes.ts';
 import Footer from "./components/footer/Footer.tsx";
+import {
+    ButtonRendererView,
+    Container,
+    Content,
+    EditorPreviewContainer,
+    Input,
+    InputGroup,
+    PrimaryButton,
+    SecondaryButton,
+    Section,
+    SectionButtons,
+    SectionTitle,
+    SeparatorFooter,
+    ToolbarContainer
+} from './render.styles.ts';
 import {
     Example,
     ExampleCategory,
@@ -23,320 +38,7 @@ import DOMPurify from 'dompurify';
 import {API_GITHUB, API_GITHUB_FINAL_MASTER} from "./api/api.ts";
 import {useGlobalAdvancedOptions} from "./type/context/GlobalUIAdvancedOptions.tsx";
 
-const Container = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    min-height: 100vh;
-    box-sizing: border-box;
-`;
-
-const SeparatorFooter = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    font-family: Arial, sans-serif;
-    min-height: 1vh;
-    box-sizing: border-box;
-`;
-
-const Content = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    width: 100%;
-    max-width: 1200px;
-    margin-top: 62px;
-    gap: 20px;
-    margin-bottom: 20px;
-
-    @media (max-width: 768px) {
-        margin-top: 80px;
-        flex-direction: column;
-    }
-`;
-
-const EditorPreviewContainer = styled.div`
-    display: flex;
-    flex: 1;
-    width: 100%;
-    gap: 20px;
-    justify-content: center;
-    align-items: stretch;
-
-    @media (max-width: 768px) {
-        flex-direction: column;
-    }
-`;
-
-const mediaQueries = {
-    phone: "(max-width: 640px)",
-    tablet: "(max-width: 1024px)",
-    fold: "(max-width: 360px) and (max-height: 640px)",
-    landscape: "(orientation: landscape) and (max-height: 640px)",
-};
-
-
-const ToolbarContainer = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-
-    @media ${mediaQueries.tablet} {
-        gap: 12px;
-    }
-
-    @media ${mediaQueries.fold} {
-        gap: 6px;
-        flex-direction: column;
-    }
-`;
-
-const Section = styled.div`
-    flex: 1 1 300px;
-    min-width: 280px;
-    background: ${({theme}) => theme.background};
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    border: 1px solid ${({theme}) => theme.border};
-    text-align: center;
-    transition: transform 0.2s;
-
-    @media ${mediaQueries.tablet} {
-        min-width: 240px;
-        padding: 16px;
-    }
-
-    @media ${mediaQueries.phone} {
-        flex: 1 1 100%;
-        min-width: 0;
-        padding: 12px;
-        border-radius: 8px;
-    }
-
-    @media ${mediaQueries.fold} {
-        padding: 8px;
-        border-radius: 6px;
-    }
-`;
-
-const SectionTitle = styled.h3`
-    font-size: 16px;
-    color: ${({theme}) => theme.text};
-    margin-bottom: 16px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-
-    @media ${mediaQueries.tablet} {
-        font-size: 14px;
-        margin-bottom: 12px;
-    }
-
-    @media ${mediaQueries.phone} {
-        font-size: 13px;
-        margin-bottom: 8px;
-    }
-
-    @media ${mediaQueries.fold} {
-        font-size: 12px;
-    }
-`;
-
-const InputGroup = styled.div`
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-
-    @media ${mediaQueries.tablet} {
-        gap: 12px;
-    }
-
-    @media ${mediaQueries.phone} {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-    }
-
-    @media ${mediaQueries.fold} {
-        gap: 6px;
-    }
-`;
-
-const Input = styled.input`
-    flex: 1;
-    padding: 14px;
-    border: 2px solid ${({theme}) => theme.border};
-    border-radius: 6px;
-    font-size: 14px;
-    transition: border 0.2s;
-    max-width: 300px;
-    background: ${({theme}) => theme.background};
-    color: ${({theme}) => theme.text};
-
-    @media ${mediaQueries.tablet} {
-        max-width: 250px;
-        font-size: 14px;
-    }
-
-    @media ${mediaQueries.phone} {
-        max-width: 100%;
-        padding: 12px;
-        font-size: 13px;
-    }
-
-    @media ${mediaQueries.fold} {
-        padding: 10px;
-        font-size: 12px;
-    }
-
-    &:focus {
-        border-color: ${({theme}) => theme.primary};
-        outline: none;
-        box-shadow: 0 0 0 2px rgb(99, 168, 241);
-    }
-`;
-
-const PrimaryButton = styled.button`
-    padding: 14px 24px;
-    background: ${({theme}) => theme.primary};
-    border: none;
-    border-radius: 6px;
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    flex-shrink: 0;
-    white-space: nowrap;
-    width: 100%;
-    min-height: 48px;
-
-    @media ${mediaQueries.tablet} {
-        padding: 12px 20px;
-        font-size: 14px;
-        min-height: 44px;
-    }
-
-    @media ${mediaQueries.phone} {
-        padding: 10px 16px;
-        font-size: 13px;
-        min-height: 40px;
-    }
-
-    @media ${mediaQueries.fold} {
-        padding: 8px 12px;
-        font-size: 12px;
-        min-height: 36px;
-    }
-
-
-    &:hover {
-        background: #0238f7;
-        transform: translateY(-1px);
-    }
-
-    &:active {
-        transform: translateY(0);
-    }
-
-    &:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-        background: ${({theme}) => theme.secondary};
-    }
-
-`;
-
-const SecondaryButton = styled(PrimaryButton)`
-    background: ${({theme}) => theme.secondary};
-    color: ${({theme}) => theme.codeText};
-
-    &:hover {
-        color: black;
-        background: #cbd5e1;
-    }
-`;
-
-
-const ButtonRendererView = styled(PrimaryButton)`
-    flex: 1 1 calc(25% - 9px); 
-    padding: 12px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 100px;
-
-    @media ${mediaQueries.tablet} {
-        flex: 1 1 calc(50% - 6px); 
-        padding: 10px;
-    }
-
-    @media ${mediaQueries.phone} {
-        flex: 1 1 100%; 
-        padding: 10px;
-        width: 100%;
-    }
-
-    @media ${mediaQueries.fold} {
-        padding: 8px;
-        border-radius: 6px;
-    }
-`;
-
-const SectionButtons = styled.div`
-    flex: 1 1 300px;
-    min-width: 280px;
-    background: ${({theme}) => theme.background};
-    border-radius: 12px;
-    padding: 15px;
-    text-align: center;
-    transition: transform 0.2s;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 12px;
-
-    @media ${mediaQueries.tablet} {
-        min-width: 240px;
-        padding: 16px;
-    }
-
-    @media ${mediaQueries.phone} {
-        flex: 1 1 100%;
-        min-width: 0;
-        padding: 12px;
-        border-radius: 8px;
-        justify-content: center;
-    }
-
-    @media ${mediaQueries.fold} {
-        padding: 8px;
-        border-radius: 6px;
-    }
-`;
-
-
-
 const Render: React.FC = () => {
-
-    const [markdown, setMarkdown] = useState<string>('');
-    const [history, setHistory] = useState<string[]>([]);
-    const [currentHistoryIndex, setCurrentHistoryIndex] = useState<number>(-1);
-    const [messageError, setMessageError] = useState<string | null>(null);
-
 
     const [isDarkMode, setisDarkMode] = useState<boolean>(() => {
         const savedisDarkMode = localStorage.getItem('isDarkMode');
@@ -355,13 +57,28 @@ const Render: React.FC = () => {
     const [filename, setFilename] = useState<string>('README.md');
     const [githubUsername, setGithubUsername] = useState<string>('');
     const [selectedView, setSelectedView] = useState<View>('both');
-    const [examples, setExamples] = useState<ExampleCategory[]>([]);
-
 
     const [language, setLanguage] = useState<Language>(() => {
         const savedLanguage = localStorage.getItem('language') as Language;
         return savedLanguage && translations[savedLanguage] ? savedLanguage : 'en';
     });
+
+    const getInitialMarkdown = (lang: Language): string => {
+        const data = translations[lang] as TranslationData;
+        const initialExample = data?.examples?.[0]?.items?.[0];
+        const text = initialExample?.["example-text"];
+        return typeof text === 'string' ? text : '';
+    };
+
+    const [markdown, setMarkdown] = useState<string>(() => getInitialMarkdown(language));
+    const [history, setHistory] = useState<string[]>(() => {
+        const initial = getInitialMarkdown(language);
+        return initial ? [initial] : [];
+    });
+    const [currentHistoryIndex, setCurrentHistoryIndex] = useState<number>(() =>
+        getInitialMarkdown(language) ? 0 : -1
+    );
+    const [messageError, setMessageError] = useState<string | null>(null);
 
     const handleLanguageChange = (lang: Language): void => {
         setLanguage(lang);
@@ -369,6 +86,7 @@ const Render: React.FC = () => {
     };
 
     const langData = translations[language] as TranslationData;
+    const examples: ExampleCategory[] = langData?.examples || [];
 
 
     const addToHistory = (content: string): void => {
@@ -505,10 +223,10 @@ const Render: React.FC = () => {
                 const sanitizedContent: string = DOMPurify.sanitize(content) as string;
                 setMarkdown(sanitizedContent);
                 addToHistory(sanitizedContent);
-            })
-            .catch(error => {
-                console.error('Error reading file:', error);
             });
+           // .catch(error => {
+             //   console.error('Error reading file:', error);
+           // });
     };
 
 
@@ -520,20 +238,6 @@ const Render: React.FC = () => {
             reader.readAsText(file);
         });
     };
-
-    useEffect(() => {
-
-        if (!markdown) {
-            const initialExample = langData?.examples[0]?.items[0];
-            const initialMarkdown = initialExample?.["example-text"] || '';
-
-            setMarkdown(initialMarkdown);
-            addToHistory(initialMarkdown);
-        }
-
-        setExamples(langData?.examples || []);
-
-    }, [langData.examples]);
 
     const {isGlobalUiAdvancedOptions, setGlobalUiAdvancedOptions} = useGlobalAdvancedOptions();
 
@@ -564,7 +268,9 @@ const Render: React.FC = () => {
                                         <Input
                                             placeholder={langData.textFilenamePlaceholder}
                                             value={filename}
-                                            onChange={(e) => setFilename(e.target.value)}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                                setFilename(e.target.value)
+                                            }
                                         />
                                         <PrimaryButton onClick={handleDownload}>
                                             {langData.textDownload}
@@ -577,7 +283,9 @@ const Render: React.FC = () => {
                                         <Input
                                             placeholder={langData.textGitHubUsername}
                                             value={githubUsername}
-                                            onChange={(e) => setGithubUsername(e.target.value)}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                                setGithubUsername(e.target.value)
+                                            }
                                         />
                                         <PrimaryButton onClick={fetchGithubMarkdown}>
                                             {langData.textFetchREADME}
