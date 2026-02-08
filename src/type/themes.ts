@@ -70,12 +70,14 @@ export const GlobalStyles = createGlobalStyle`
         padding: 0;
         box-sizing: border-box;
         font-family: Arial, sans-serif;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center; 
+        display: block;
         min-height: 100vh; 
         overflow-x: hidden;
+    }
+
+    #root {
+        width: 100%;
+        min-height: 100vh;
     }
 
     @media (min-width: 1920px) {

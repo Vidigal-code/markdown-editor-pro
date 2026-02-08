@@ -80,6 +80,22 @@ const Render: React.FC = () => {
     );
     const [messageError, setMessageError] = useState<string | null>(null);
 
+    const [isFocusMode, setIsFocusMode] = useState<boolean>(() => {
+        const saved = localStorage.getItem('isFocusMode');
+        return saved ? JSON.parse(saved) : false;
+    });
+
+    const toggleFocusMode = (): void => {
+        setIsFocusMode(prev => {
+            const next = !prev;
+            localStorage.setItem('isFocusMode', JSON.stringify(next));
+            if (next) {
+                setSelectedView(bothView);
+            }
+            return next;
+        });
+    };
+
     const handleLanguageChange = (lang: Language): void => {
         setLanguage(lang);
         localStorage.setItem('language', lang);
@@ -245,21 +261,23 @@ const Render: React.FC = () => {
     return (
         <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
             <GlobalStyles/>
-            <Container>
+            <Container $isFocusMode={isFocusMode}>
                 <Header
                     language={language}
                     onChangeLanguage={handleLanguageChange}
                     isDarkMode={isDarkMode}
                     onToggleisDarkMode={toggleisDarkMode}
+                    isFocusMode={isFocusMode}
+                    onToggleFocusMode={toggleFocusMode}
                 />
-                <Content>
-                    {messageError != null && (
+                <Content $isFocusMode={isFocusMode}>
+                    {!isFocusMode && messageError != null && (
                         <ToolbarContainer>
                             <Section style={{border: 'none', boxShadow: 'none', background:'#ec5353'}}>
                                 <span style={{color: 'white'}}>{messageError}</span>
                             </Section>
                         </ToolbarContainer>)}
-                    <ToolbarContainer>
+                    {!isFocusMode && <ToolbarContainer>
                         {!isGlobalUiAdvancedOptions ? (
                             <>
                                 <Section>
@@ -348,8 +366,8 @@ const Render: React.FC = () => {
                                 </Section>
                             </>
                         )}
-                    </ToolbarContainer>
-                    <ToolbarContainer>
+                    </ToolbarContainer>}
+                    {!isFocusMode && <ToolbarContainer>
                         <Section>
                             <SectionTitle>{langData.textViewMode}</SectionTitle>
                             <SectionButtons>
@@ -370,9 +388,9 @@ const Render: React.FC = () => {
                                 </ButtonRendererView>
                             </SectionButtons>
                         </Section>
-                    </ToolbarContainer>
-                    <EditorPreviewContainer>
-                        {(selectedView === 'editor' || selectedView === 'both') && (
+                    </ToolbarContainer>}
+                    <EditorPreviewContainer $isFocusMode={isFocusMode}>
+                        {(isFocusMode || selectedView === 'editor' || selectedView === 'both') && (
                             <Editor
                                 markdown={markdown}
                                 onChange={handleChange}
@@ -381,7 +399,7 @@ const Render: React.FC = () => {
                             />
                         )}
 
-                        {(selectedView === 'preview' || selectedView === 'both') && (
+                        {(isFocusMode || selectedView === 'preview' || selectedView === 'both') && (
                             <Preview
                                 markdown={markdown}
                                 isDarkMode={isDarkMode}

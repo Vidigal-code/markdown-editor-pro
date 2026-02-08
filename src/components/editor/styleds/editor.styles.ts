@@ -2,6 +2,9 @@ import styled from 'styled-components';
 
 export const EditorContainer = styled.textarea`
     flex: 1;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
     border: 1px solid ${props => props.theme.border};
     border-radius: 4px;
     overflow-y: auto;
@@ -36,7 +39,19 @@ export const EditorContainer = styled.textarea`
         background-color: ${props => props.theme.scrollbar};
     }
 
+    @media (max-width: 1024px) and (min-width: 769px) {
+        max-width: 720px;
+        padding: 16px;
+        border-radius: 8px;
+        height: 600px;
+        min-height: 600px;
+        max-height: 600px;
+    }
+
     @media (max-width: 768px) {
+        max-width: 720px;
+        padding: 16px;
+        border-radius: 8px;
         height: 500px;
         min-height: 500px;
         max-height: 500px;

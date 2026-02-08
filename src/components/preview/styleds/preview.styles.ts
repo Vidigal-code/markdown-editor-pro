@@ -2,6 +2,9 @@ import styled from 'styled-components';
 
 export const PreviewContainer = styled.div`
     flex: 1;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
     border: 1px solid ${props => props.theme.border};
     border-radius: 8px;
     overflow-y: auto;
@@ -34,12 +37,24 @@ export const PreviewContainer = styled.div`
         border: 3px solid ${props => props.theme.scrollbarTrack};
     }
 
+    @media (max-width: 1024px) and (min-width: 769px) {
+        max-width: 720px;
+        padding: 16px;
+        height: 600px;
+        min-height: 600px;
+        max-height: 600px;
+    }
+
     @media (max-width: 768px) {
         height: 500px;
         min-height: 500px;
         max-height: 500px;
         padding: 16px;
         font-size: 16px;
+    }
+
+    @media (max-width: 1024px) {
+        max-width: 720px;
     }
 
     h1, h2, h3, h4, h5, h6 {

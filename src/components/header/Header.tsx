@@ -17,7 +17,14 @@ import {
     Title
 } from "./styleds/header.styles.ts";
 
-export default function Header({language, onChangeLanguage, isDarkMode, onToggleisDarkMode}: NavbarProps) {
+export default function Header({
+                                  language,
+                                  onChangeLanguage,
+                                  isDarkMode,
+                                  onToggleisDarkMode,
+                                  isFocusMode,
+                                  onToggleFocusMode
+                              }: NavbarProps) {
 
 
     const navigate = useNavigate();
@@ -101,6 +108,15 @@ export default function Header({language, onChangeLanguage, isDarkMode, onToggle
                             >
                                 {isDarkMode ? <FaRegLightbulb/>
                                     : <FaLightbulb/>}
+                            </DropdownItem>
+                            <DropdownItem
+                                $theme={currentTheme}
+                                onClick={() => {
+                                    onToggleFocusMode();
+                                    setIsOptions(false);
+                                }}
+                            >
+                                {isFocusMode ? (langData.textShowTools ?? 'Show tools') : (langData.textFocusMode ?? 'Focus mode')}
                             </DropdownItem>
                             <DropdownItem
                                 $theme={currentTheme}

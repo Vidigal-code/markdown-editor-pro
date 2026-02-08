@@ -1,11 +1,13 @@
 import styled from 'styled-components';
 
 
-export const Container = styled.div`
+export const Container = styled.div<{ $isFocusMode?: boolean }>`
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    align-items: ${({$isFocusMode}) => ($isFocusMode ? 'stretch' : 'center')};
+    justify-content: ${({$isFocusMode}) => ($isFocusMode ? 'flex-start' : 'center')};
+    width: 100%;
+    max-width: 100%;
     padding: 20px;
     font-family: Arial, sans-serif;
     min-height: 100vh;
@@ -23,32 +25,39 @@ export const SeparatorFooter = styled.div`
     box-sizing: border-box;
 `;
 
-export const Content = styled.div`
+export const Content = styled.div<{ $isFocusMode?: boolean }>`
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    align-self: stretch;
     width: 100%;
-    max-width: 1200px;
-    margin-top: 62px;
+    max-width: ${({$isFocusMode}) => ($isFocusMode ? '100%' : '1200px')};
+    margin: 62px auto 20px auto;
     gap: 20px;
-    margin-bottom: 20px;
 
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
         margin-top: 80px;
         flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
 `;
 
-export const EditorPreviewContainer = styled.div`
+export const EditorPreviewContainer = styled.div<{ $isFocusMode?: boolean }>`
     display: flex;
     flex: 1;
     width: 100%;
     gap: 20px;
-    justify-content: center;
+    justify-content: ${({$isFocusMode}) => ($isFocusMode ? 'space-between' : 'center')};
     align-items: stretch;
+    align-self: stretch;
+    min-width: 0;
+    flex-wrap: nowrap;
 
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
         flex-direction: column;
+        align-items: center;
+        gap: 16px;
     }
 `;
 

@@ -16,6 +16,8 @@ export interface TranslationData {
     textAdvancedOptions: string;
     textNormalOptions: string;
     textOptions: string;
+    textFocusMode: string;
+    textShowTools: string;
     textAreaPlaceholderEditor: string;
     textBack: string;
     textGitHubUsername: string;
@@ -98,6 +100,8 @@ export interface NavbarProps {
     onChangeLanguage: (lang: Language) => void;
     isDarkMode: boolean;
     onToggleisDarkMode: () => void;
+    isFocusMode: boolean;
+    onToggleFocusMode: () => void;
 }
 
 export interface ExampleListCustomProps extends ExampleListProps {
