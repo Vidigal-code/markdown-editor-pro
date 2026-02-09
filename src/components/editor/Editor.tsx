@@ -1,6 +1,6 @@
 import {ChangeEvent} from 'react';
 import {EditorProps, TranslationData} from "../../type/Interface.ts";
-import translations from "../../assets/translations.json";
+import translations from "../../assets/lang/index.ts";
 import {EditorContainer} from "./styleds/editor.styles.ts";
 
 export default function Editor({markdown, onChange, language}: EditorProps) {

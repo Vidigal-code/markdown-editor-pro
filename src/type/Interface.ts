@@ -31,6 +31,8 @@ export interface TranslationData {
     textRedo: string;
     textClean: string;
     textUpload: string;
+    textExportPDF: string;
+    textViewPDF: string;
     textViewMode: string;
     textPreview: string;
     textBoth: string;
@@ -85,6 +87,7 @@ export interface ExampleListProps {
 export interface PreviewProps {
     markdown: string;
     isDarkMode?: boolean;
+    containerId?: string;
 }
 
 

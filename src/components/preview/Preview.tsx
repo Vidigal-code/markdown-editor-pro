@@ -5,11 +5,11 @@ import {PreviewProps} from "../../type/Interface.ts";
 import DOMPurify from "dompurify";
 import {PreviewContainer} from "./styleds/preview.styles.ts";
 
-export default function Preview({markdown}: PreviewProps) {
+export default function Preview({markdown, containerId}: PreviewProps) {
     const sanitizedMarkdown = DOMPurify.sanitize(markdown);
 
     return (
-        <PreviewContainer>
+        <PreviewContainer id={containerId}>
             <ReactMarkdown
                 rehypePlugins={[remarkGfm, rehypeRaw]}
             >

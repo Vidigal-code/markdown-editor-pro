@@ -1,0 +1,242 @@
+{
+  "menu": {
+    "pt": "Portugués",
+    "en": "Inglés",
+    "es": "Español"
+  },
+  "textMessageExampleList": "Lista de ejemplos",
+  "textMessageCustomExampleList": "Lista de ejemplos personalizada",
+  "textErrorGitHubUserRequired": "Se requiere el nombre de usuario de GitHub.",
+  "textErrorReadmeNotFound": "README no encontrado o el repositorio no existe.",
+  "textSelectMarkdownFile": "Por favor, seleccione un archivo Markdown (.md).",
+  "textAdvancedOptions": "Opciones avanzadas",
+  "textNormalOptions": "Opciones normales",
+  "textOptions": "Opciones",
+  "textFocusMode": "Modo enfoque",
+  "textShowTools": "Mostrar herramientas",
+  "textBack": "Volver",
+  "textAreaPlaceholderEditor": "Escribe tu markdown aquí",
+  "textGitHubUsername": "Nombre de usuario de GitHub",
+  "textFilenamePlaceholder": "Nombre del archivo",
+  "textFileManagement": "Gestión de Archivos",
+  "textDownload": "Descargar",
+  "textGitHubIntegration": "Integración con GitHub",
+  "textFetchREADME": "Obtener README",
+  "textEditorActions": "Acciones del Editor",
+  "textUndo": "Deshacer",
+  "textRedo": "Rehacer",
+  "textClean": "Limpiar",
+  "textUpload": "Subir",
+  "textExportPDF": "Exportar PDF",
+  "textViewPDF": "Ver PDF",
+  "textViewMode": "Modo de Vista",
+  "textPreview": "Vista Previa",
+  "textBoth": "Ambos",
+  "textEditor": "Editor",
+  "textExamples": {
+    "textEdit": "Editar",
+    "textSaveEdit": "Guardar Editar",
+    "textSelected": "Seleccionado",
+    "textCategory": "Categoría",
+    "textSave": "Guardar",
+    "textCancel": "Cancelar",
+    "textRandom": "Aleatorio",
+    "textNoexamplesInCategory": "No hay ejemplos en la categoría",
+    "textRandomExampleSelectedFrom": "Ejemplo aleatorio seleccionado de",
+    "textNoexamplesAvailable": "No hay ejemplos disponibles",
+    "textCategoryNotFound": "Categoría no encontrada",
+    "textCategoryName": "Nombre de la Categoría",
+    "textAddNewCategory": "Agregar Nueva Categoría",
+    "textAddCategory": "Agregar Categoría",
+    "textAllExamples": "Todos los Ejemplos",
+    "textAddItem": "Agregar Ítem",
+    "textItemTitle": "Título del Ítem",
+    "textAddNewItem": "Agregar Nuevo Ítem",
+    "textSaveCurrentEditorContent": "Guardar Contenido Actual del Editor",
+    "textClean": "Limpiar"
+  },
+  "examples": [
+    {
+      "id": 0,
+      "category": "Markdown Básico",
+      "items": [
+        {
+          "id": 0,
+          "title": "Ejemplo de Markdown Básico",
+          "example-text": "# Markdown Básico\n\nEste es un ejemplo básico de sintaxis Markdown:\n\n- **Texto en negrita**\n- *Texto en cursiva*\n- [Enlace](https://example.com)\n\n## Subtítulo\n1. Primer elemento\n2. Segundo elemento\n\n```python\n# Ejemplo de código Python\nprint('¡Hola, Mundo!')\n```",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "category": "GitHub Flavored",
+      "items": [
+        {
+          "id": 0,
+          "title": "Markdown GitHub Flavored",
+          "example-text": "# Markdown GitHub Flavored\n\n## Características\n- Tablas\n- Listas de Tareas\n\n| Característica | Descripción |\n|----------------|-------------|\n| Tabla          | Muestra datos en filas y columnas |\n\n- [ ] Tarea 1\n- [x] Tarea 2 (completada)",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "category": "Plantillas",
+      "items": [
+        {
+          "id": 0,
+          "title": "Plantilla de Documento",
+          "example-text": "# Título del Proyecto\n\n## Descripción\nProporcione una breve descripción del proyecto.\n\n## Instalación\n1. Paso 1\n2. Paso 2\n\n## Uso\nInstrucciones sobre cómo usar el proyecto.",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "category": "Listas",
+      "items": [
+        {
+          "id": 0,
+          "title": "Listas Ordenadas y No Ordenadas",
+          "example-text": "## No Ordenada\n- Elemento A\n- Elemento B\n\n## Ordenada\n1. Primero\n2. Segundo",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "category": "Bloques de Código",
+      "items": [
+        {
+          "id": 0,
+          "title": "Ejemplo en JavaScript",
+          "example-text": "```javascript\nfunction saludar(nombre) {\n  console.log(`¡Hola, ${nombre}!`);\n}\nsaludar('Mundo');\n```",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "category": "Bloques de Código",
+      "items": [
+        {
+          "id": 0,
+          "title": "Ejemplo en HTML",
+          "example-text": "```html\n<!DOCTYPE html>\n<html>\n<head><title>Página</title></head>\n<body><h1>Hola</h1></body>\n</html>\n```",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "category": "Citas",
+      "items": [
+        {
+          "id": 0,
+          "title": "Ejemplo de Cita",
+          "example-text": "> Esta es una cita.\n> Se extiende por varias líneas.\n\nUtilízala para citas o notas.",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "category": "Imágenes",
+      "items": [
+        {
+          "id": 0,
+          "title": "Ejemplo de Imagen",
+          "example-text": "![Texto alternativo](https://via.placeholder.com/150)\n\nAquí está una imagen de ejemplo.",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "category": "Markdown Avanzado",
+      "items": [
+        {
+          "id": 0,
+          "title": "Código Inline y Escape",
+          "example-text": "`código en línea` y \\*asteriscos escapados\\* se muestran aquí.",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "category": "Tablas",
+      "items": [
+        {
+          "id": 0,
+          "title": "Tabla en Markdown",
+          "example-text": "| Nombre | Edad |\n|--------|------|\n| Ana    | 24   |\n| Juan   | 30   |",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "category": "Encabezados",
+      "items": [
+        {
+          "id": 0,
+          "title": "Niveles de Encabezados",
+          "example-text": "# H1\n## H2\n### H3\n#### H4\n##### H5\n###### H6",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "category": "Enlaces",
+      "items": [
+        {
+          "id": 0,
+          "title": "Variaciones de Enlaces",
+          "example-text": "[OpenAI](https://openai.com) o <https://openai.com> funcionan igualmente.",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "category": "Listas de Tareas",
+      "items": [
+        {
+          "id": 0,
+          "title": "Lista de Tareas",
+          "example-text": "- [x] Escribir código\n- [ ] Revisar código\n- [ ] Implementar",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "category": "Contenido Mixto",
+      "items": [
+        {
+          "id": 0,
+          "title": "Ejemplo Mixto",
+          "example-text": "# Título\nTexto con `código en línea` y un [enlace](https://example.com).\n\n```bash\necho Hola\n```",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "category": "Guía del Usuario",
+      "items": [
+        {
+          "id": 0,
+          "title": "Modelo Básico de Guía del Usuario",
+          "example-text": "# Guía del Usuario\n\n## Introducción\n¡Bienvenido!\n\n## Características\n- Fácil\n- Rápido\n\n## Soporte\nContáctenos en [soporte@example.com](mailto:soporte@example.com).",
+          "example-file": ""
+        }
+      ]
+    }
+  ]
+}
+
+

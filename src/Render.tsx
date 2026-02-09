@@ -1,6 +1,6 @@
 import React, {useState, useRef} from 'react';
 import {ThemeProvider} from 'styled-components';
-import translations from './assets/translations.json';
+import translations from './assets/lang/index.ts';
 import Editor from './components/editor/Editor.tsx';
 import Preview from './components/preview/Preview.tsx';
 import Header from './components/header/Header.tsx';
@@ -147,6 +147,124 @@ const Render: React.FC = () => {
         document.body.appendChild(element);
         element.click();
         document.body.removeChild(element);
+    };
+
+    const generatePdfFromPreview = async (mode: 'download' | 'open'): Promise<void> => {
+        if (!isFocusMode && selectedView === editorView) {
+            setSelectedView(bothView);
+            window.setTimeout(() => {
+                void generatePdfFromPreview(mode);
+            }, 150);
+            return;
+        }
+
+        const previewEl = document.getElementById('preview-to-print');
+        if (!previewEl) return;
+
+        const safeTitle = (filename || 'document')
+            .replace(/\.md$/i, '')
+            .replace(/[\\/:*?"<>|]+/g, '')
+            .trim() || 'document';
+
+        // Open the tab immediately to avoid popup blockers.
+        // Keep it blank (no intermediate "Generating..." page) and navigate to the PDF when ready.
+        const pdfTab = mode === 'open' ? window.open('about:blank', '_blank') : null;
+        if (mode === 'open' && !pdfTab) return;
+
+        // Create a "print-friendly" clone so the PDF includes the full content
+        // (the on-screen preview is scrollable with fixed height).
+        const clone = document.createElement('div');
+        clone.className = 'pdf-export';
+        clone.innerHTML = previewEl.innerHTML;
+        clone.style.background = '#ffffff';
+        clone.style.color = '#111111';
+        clone.style.padding = '24px';
+        clone.style.maxWidth = '900px';
+        clone.style.margin = '0 auto';
+        clone.style.boxSizing = 'border-box';
+        document.body.appendChild(clone);
+
+        const styleEl = document.createElement('style');
+        styleEl.setAttribute('data-pdf-export', 'true');
+        styleEl.textContent = `
+          .pdf-export { font-family: Arial, sans-serif; color: #111; }
+          .pdf-export h1, .pdf-export h2, .pdf-export h3, .pdf-export h4, .pdf-export h5, .pdf-export h6 {
+            margin: 18px 0 10px;
+            line-height: 1.25;
+            page-break-after: avoid;
+          }
+          .pdf-export p { margin: 10px 0; line-height: 1.6; }
+          .pdf-export ul, .pdf-export ol { margin: 10px 0 10px 20px; }
+          .pdf-export pre {
+            background: #f6f8fa;
+            padding: 12px;
+            border-radius: 6px;
+            overflow: visible;
+            white-space: pre-wrap;
+            word-break: break-word;
+            page-break-inside: avoid;
+          }
+          .pdf-export code {
+            background: #f6f8fa;
+            padding: 0.2em 0.35em;
+            border-radius: 4px;
+          }
+          .pdf-export blockquote {
+            margin: 16px 0;
+            padding: 0 1em;
+            border-left: 4px solid #ddd;
+            color: #444;
+            page-break-inside: avoid;
+          }
+          .pdf-export table { width: 100%; border-collapse: collapse; page-break-inside: avoid; }
+          .pdf-export th, .pdf-export td { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+          .pdf-export img { max-width: 100%; height: auto; page-break-inside: avoid; }
+          .pdf-export a { color: #0969da; text-decoration: none; }
+        `;
+        document.head.appendChild(styleEl);
+
+        try {
+            const mod = await import('html2pdf.js');
+            const html2pdf = mod.default;
+
+            const worker = html2pdf()
+                .set({
+                    margin: 10,
+                    filename: `${safeTitle}.pdf`,
+                    image: {type: 'jpeg', quality: 0.98},
+                    html2canvas: {scale: 2, useCORS: true, backgroundColor: '#ffffff'},
+                    jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'},
+                    pagebreak: {mode: ['avoid-all', 'css', 'legacy']},
+                })
+                .from(clone);
+
+            if (mode === 'download') {
+                await worker.save();
+            } else {
+                const pdf = await worker.toPdf().get('pdf');
+                const blob = pdf.output('blob');
+                const blobUrl = URL.createObjectURL(blob);
+                if (pdfTab) {
+                    // Use replace to avoid keeping about:blank in history.
+                    pdfTab.location.replace(blobUrl);
+                }
+            }
+        } catch (err) {
+            if (pdfTab) pdfTab.close();
+            // Keep console visibility for debugging
+            console.error('PDF generation failed:', err);
+        } finally {
+            document.body.removeChild(clone);
+            document.head.removeChild(styleEl);
+        }
+    };
+
+    const exportPreviewToPdf = (): void => {
+        void generatePdfFromPreview('download');
+    };
+
+    const viewPreviewPdf = (): void => {
+        void generatePdfFromPreview('open');
     };
 
     const fetchGithubMarkdown = async (): Promise<void> => {
@@ -326,6 +444,18 @@ const Render: React.FC = () => {
                                         <SecondaryButton onClick={() => inputFileRef.current?.click()}>
                                             {langData.textUpload}
                                         </SecondaryButton>
+                                        <SecondaryButton
+                                            onClick={viewPreviewPdf}
+                                            disabled={!markdown || markdown.trim().length === 0}
+                                        >
+                                            {langData.textViewPDF}
+                                        </SecondaryButton>
+                                        <SecondaryButton
+                                            onClick={exportPreviewToPdf}
+                                            disabled={!markdown || markdown.trim().length === 0}
+                                        >
+                                            {langData.textExportPDF}
+                                        </SecondaryButton>
                                         <Input
                                             type="file"
                                             accept=".md,text/markdown,text/x-markdown"
@@ -403,6 +533,7 @@ const Render: React.FC = () => {
                             <Preview
                                 markdown={markdown}
                                 isDarkMode={isDarkMode}
+                                containerId="preview-to-print"
                             />
                         )}
                     </EditorPreviewContainer>

@@ -1,6 +1,6 @@
 import {Language, NavbarProps} from "../../type/Interface.ts";
 import {useNavigate} from "react-router-dom";
-import translations from "../../assets/translations.json";
+import translations from "../../assets/lang/index.ts";
 import React, {useEffect, useRef} from "react";
 import {FaLightbulb} from "react-icons/fa6";
 import {FaRegLightbulb} from "react-icons/fa6";

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Category, CustomExample, ExampleListCustomProps, TranslationData} from "../../type/Interface.ts";
 import DOMPurify from 'dompurify';
-import translations from "../../assets/translations.json";
+import translations from "../../assets/lang/index.ts";
 import {
     Button,
     ButtonContainer,

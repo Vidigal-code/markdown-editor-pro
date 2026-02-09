@@ -1,7 +1,7 @@
 import React from 'react';
 import {Example, ExampleListProps, TranslationData} from "../../type/Interface.ts";
 import DOMPurify from 'dompurify';
-import translations from "../../assets/translations.json";
+import translations from "../../assets/lang/index.ts";
 import {CategoryTitle, ExampleListContainer, List, SubListItem} from "./styleds/exampleList.styles.ts";
 
 
