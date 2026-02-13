@@ -1,22 +1,16 @@
-import {darkTheme, lightTheme} from "../../type/themes.ts";
 import {FooterContainer, FooterLeft, FooterLink, FooterRight, FooterText} from "./styleds/footer.styles.ts";
 
-interface FooterProps {
-    isDarkMode: boolean;
-}
-
-export default function Footer({ isDarkMode }: FooterProps) {
+export default function Footer() {
     const currentYear = new Date().getFullYear();
-    const currentTheme = !isDarkMode ? darkTheme : lightTheme;
 
     return (
-        <FooterContainer $theme={currentTheme}>
+        <FooterContainer>
             <FooterLeft>
-                <FooterText $theme={currentTheme}>
+                <FooterText>
                     © {currentYear} Markdown Editor Pro
-                    <span style={{marginLeft: '5px', color: isDarkMode ? 'black' : 'white'}}>
+                    <span style={{marginLeft: '5px'}}>
                         By
-                         <FooterLink $theme={currentTheme} style={{marginLeft: '5px', color: isDarkMode ? 'black' : 'white'}} href="https://github.com/Vidigal-code"
+                         <FooterLink style={{marginLeft: '5px'}} href="https://github.com/Vidigal-code"
                                      target="_blank">
                          Vidigal-code
                     </FooterLink>
@@ -24,8 +18,8 @@ export default function Footer({ isDarkMode }: FooterProps) {
                 </FooterText>
             </FooterLeft>
             <FooterRight>
-                <FooterText $theme={currentTheme}>
-                    <FooterLink style={{marginLeft: '5px', color: isDarkMode ? 'black' : 'white'}} $theme={currentTheme} href="https://github.com/Vidigal-code/markdown-editor-pro" target="_blank">
+                <FooterText>
+                    <FooterLink style={{marginLeft: '5px'}} href="https://github.com/Vidigal-code/markdown-editor-pro" target="_blank">
                         Documentation
                     </FooterLink>
                 </FooterText>

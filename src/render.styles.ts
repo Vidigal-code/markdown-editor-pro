@@ -32,11 +32,11 @@ export const Content = styled.div<{ $isFocusMode?: boolean }>`
     align-self: stretch;
     width: 100%;
     max-width: ${({$isFocusMode}) => ($isFocusMode ? '100%' : '1200px')};
-    margin: 62px auto 20px auto;
+    margin: 88px auto 20px auto;
     gap: 20px;
 
-    @media (max-width: 1024px) {
-        margin-top: 80px;
+    @media (max-width: 1200px) {
+        margin-top: 20px;
         flex-direction: column;
         align-items: center;
         justify-content: center;

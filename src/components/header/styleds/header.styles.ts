@@ -2,14 +2,16 @@ import styled from 'styled-components';
 import {darkTheme} from "../../../type/themes.ts";
 
 export const HeaderContainer = styled.header<{ $theme: any }>`
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    align-self: stretch;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    padding: 10px 20px;
+    gap: 10px;
+    padding: 10px;
     background: ${({$theme}) => $theme.backgroundheader};
     color: ${({$theme}) => $theme.text};
     font-family: Arial, sans-serif;
@@ -18,11 +20,25 @@ export const HeaderContainer = styled.header<{ $theme: any }>`
     //border-bottom-left-radius: 10px;
     //border-bottom-right-radius: 10px;
 
-    @media (max-width: 768px) {
-        flex-direction: column;
-        gap: 10px;
-        padding: 10px;
-        border-radius: 0;
+    nav {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    @media (min-width: 1201px) {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 12px 24px;
+
+        nav {
+            width: auto;
+        }
     }
 
     @media (max-width: 280px) {
@@ -30,7 +46,7 @@ export const HeaderContainer = styled.header<{ $theme: any }>`
     }
 
     @media (min-width: 1800px) {
-        padding: 15px 40px;
+        padding: 15px 48px;
         max-width: 100%;
     }
 `;
@@ -62,8 +78,22 @@ export const Title = styled.h1<{ $theme: any }>`
 
 export const ControlsContainer = styled.div`
     display: flex;
-    gap: 15px;
+    gap: 12px;
+    width: 100%;
+    max-width: 380px;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+
+    @media (min-width: 1201px) {
+        width: auto;
+        max-width: none;
+        margin: 0;
+        flex-direction: row;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
 
     @media (max-width: 480px) {
         gap: 10px;
@@ -73,12 +103,14 @@ export const ControlsContainer = styled.div`
 export const SelectContainer = styled.div<{ $theme: any }>`
     position: relative;
     width: 100%;
-    max-width: 300px;
+    max-width: 360px;
+    flex: 1 1 100%;
     font-family: inherit;
-    z-index: 40;
 
-    @media screen and (max-width: 768px) {
-        max-width: 100%;
+    @media (min-width: 1201px) {
+        width: clamp(160px, 12vw, 200px);
+        max-width: none;
+        flex: 0 0 clamp(160px, 12vw, 200px);
     }
 `;
 
@@ -87,11 +119,16 @@ export const SelectButton = styled.div<{ $theme: any }>`
     justify-content: space-between;
     align-items: center;
     padding: 8px 16px;
+    min-height: 42px;
+    box-sizing: border-box;
     font-size: 16px;
     font-weight: 500;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.6s ease-in-out;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     background-color: transparent;
     color: ${({$theme}) => $theme.text};
@@ -131,7 +168,7 @@ export const DropdownList = styled.ul<{ $theme: any; $isOpen: boolean }>`
     list-style: none;
     border-radius: 8px;
     background-color: ${({$theme}) => $theme.secondary};
-    z-index: 50;
+    z-index: 1200;
     display: ${({$isOpen}) => ($isOpen ? 'block' : 'none')};
     text-align: center;
     border: 2px solid ${({$theme}) => $theme.border};
@@ -154,6 +191,7 @@ export const DropdownItem = styled.li<{ $theme: any }>`
     padding: 10px 20px;
     font-size: 14px;
     font-weight: bold;
+    white-space: nowrap;
     cursor: pointer;
     transition: all 0.3s ease;
     color: ${({$theme}) => $theme.text};

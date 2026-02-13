@@ -101,6 +101,13 @@ export interface EditorProps {
 export interface NavbarProps {
     language: Language;
     onChangeLanguage: (lang: Language) => void;
+    selectedLayoutId: string;
+    onChangeLayout: (layoutId: string) => void;
+    layoutOptions: Array<{
+        id: string;
+        name: string;
+    }>;
+    hideThemeSelector: boolean;
     isDarkMode: boolean;
     onToggleisDarkMode: () => void;
     isFocusMode: boolean;

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const FooterContainer = styled.footer<{ $theme: any }>`
+export const FooterContainer = styled.footer`
     position: absolute;
     left: 0;
     right: 0;
@@ -8,8 +8,8 @@ export const FooterContainer = styled.footer<{ $theme: any }>`
     justify-content: center;
     align-items: center;
     padding: 15px 20px;
-    background: ${({$theme}) => $theme.backgroundfooter};
-    color: ${({ $theme }) => $theme.text};
+    background: ${({theme}) => theme.backgroundfooter};
+    color: ${({theme}) => theme.text};
     font-family: Arial, sans-serif;
     z-index: 1000;
     //box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
@@ -32,9 +32,9 @@ export const FooterContainer = styled.footer<{ $theme: any }>`
     }
 `;
 
-export const FooterText = styled.span<{ $theme: any }>`
+export const FooterText = styled.span`
     font-size: 14px;
-    color: ${({ $theme }) => $theme.text};
+    color: ${({theme}) => theme.text};
     opacity: 0.9;
     transition: opacity 0.3s ease;
 
@@ -47,14 +47,14 @@ export const FooterText = styled.span<{ $theme: any }>`
     }
 `;
 
-export const FooterLink = styled.a<{ $theme: any }>`
-    color: ${({ $theme }) => $theme.linka};
+export const FooterLink = styled.a`
+    color: ${({theme}) => theme.linka};
     text-decoration: none;
     cursor: pointer;
     transition: all 0.3s ease;
 
     &:hover {
-        color: ${({ $theme }) => $theme.text};
+        color: ${({theme}) => theme.text};
         text-decoration: underline;
     }
 `;

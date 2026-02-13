@@ -5,6 +5,8 @@ declare module 'styled-components' {
     export interface DefaultTheme {
         codebackground: string;
         prebackground: string;
+        backgroundfooter: string;
+        backgroundheader: string;
         background: string;
         text: string;
         primary: string;
@@ -58,6 +60,8 @@ export const darkTheme = {
     codeText: '#c9d1d9',
     linka: '#58a6ff'
 };
+
+export type AppTheme = typeof lightTheme;
 
 
 

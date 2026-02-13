@@ -5,7 +5,7 @@ import Editor from './components/editor/Editor.tsx';
 import Preview from './components/preview/Preview.tsx';
 import Header from './components/header/Header.tsx';
 import ExampleList from "./components/example/ExampleList.tsx";
-import {lightTheme, darkTheme, GlobalStyles} from './type/themes.ts';
+import {GlobalStyles} from './type/themes.ts';
 import Footer from "./components/footer/Footer.tsx";
 import {
     ButtonRendererView,
@@ -37,21 +37,37 @@ import RandomExampleSelector from "./components/example/RandomExampleSelector.ts
 import DOMPurify from 'dompurify';
 import {API_GITHUB, API_GITHUB_FINAL_MASTER} from "./api/api.ts";
 import {useGlobalAdvancedOptions} from "./type/context/GlobalUIAdvancedOptions.tsx";
+import {
+    getDefaultLanguage,
+    getHideThemeSelector,
+    getInitialLayoutId,
+    getLayoutById,
+    getSelectableLayoutsByMode,
+    getThemeByLayoutId,
+    resolveLayoutIdForModeSwitch
+} from "./assets/layouts/index.ts";
 
 const Render: React.FC = () => {
 
-    const [isDarkMode, setisDarkMode] = useState<boolean>(() => {
-        const savedisDarkMode = localStorage.getItem('isDarkMode');
-        return savedisDarkMode ? JSON.parse(savedisDarkMode) : false;
-    });
+    const [selectedLayoutId, setSelectedLayoutId] = useState<string>(() =>
+        getInitialLayoutId(localStorage.getItem('selectedLayoutId'))
+    );
+    const selectedLayout = getLayoutById(selectedLayoutId) ?? getLayoutById(getInitialLayoutId(null));
+    const isDarkMode = selectedLayout?.mode === 'dark';
+    const activeTheme = getThemeByLayoutId(selectedLayout?.id ?? selectedLayoutId);
+    const hideThemeSelector = getHideThemeSelector();
+    const layoutOptions = getSelectableLayoutsByMode(isDarkMode ? 'dark' : 'light')
+        .map((layout) => ({id: layout.id, name: layout.name}));
 
+    const handleLayoutChange = (layoutId: string): void => {
+        setSelectedLayoutId(layoutId);
+        localStorage.setItem('selectedLayoutId', layoutId);
+    };
 
     const toggleisDarkMode = (): void => {
-        setisDarkMode((prev) => {
-            const newisDarkMode = !prev;
-            localStorage.setItem('isDarkMode', JSON.stringify(newisDarkMode));
-            return newisDarkMode;
-        });
+        const targetMode = isDarkMode ? 'light' : 'dark';
+        const nextLayoutId = resolveLayoutIdForModeSwitch(selectedLayoutId, targetMode);
+        handleLayoutChange(nextLayoutId);
     };
 
     const [filename, setFilename] = useState<string>('README.md');
@@ -60,7 +76,8 @@ const Render: React.FC = () => {
 
     const [language, setLanguage] = useState<Language>(() => {
         const savedLanguage = localStorage.getItem('language') as Language;
-        return savedLanguage && translations[savedLanguage] ? savedLanguage : 'en';
+        const defaultLanguage = getDefaultLanguage();
+        return savedLanguage && translations[savedLanguage] ? savedLanguage : defaultLanguage;
     });
 
     const getInitialMarkdown = (lang: Language): string => {
@@ -377,12 +394,16 @@ const Render: React.FC = () => {
 
 
     return (
-        <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
+        <ThemeProvider theme={activeTheme}>
             <GlobalStyles/>
             <Container $isFocusMode={isFocusMode}>
                 <Header
                     language={language}
                     onChangeLanguage={handleLanguageChange}
+                    selectedLayoutId={selectedLayoutId}
+                    onChangeLayout={handleLayoutChange}
+                    layoutOptions={layoutOptions}
+                    hideThemeSelector={hideThemeSelector}
                     isDarkMode={isDarkMode}
                     onToggleisDarkMode={toggleisDarkMode}
                     isFocusMode={isFocusMode}
@@ -540,7 +561,7 @@ const Render: React.FC = () => {
                 </Content>
             </Container>
             <SeparatorFooter>
-                <Footer isDarkMode={isDarkMode}/>
+                <Footer/>
             </SeparatorFooter>
         </ThemeProvider>
     );
