@@ -1,12 +1,27 @@
-import React, {useState, useEffect, useRef} from 'react';
-import translations from './assets/translations.json';
+import React, {useState, useRef} from 'react';
+import {ThemeProvider} from 'styled-components';
+import translations from './assets/lang/index.ts';
 import Editor from './components/editor/Editor.tsx';
 import Preview from './components/preview/Preview.tsx';
 import Header from './components/header/Header.tsx';
 import ExampleList from "./components/example/ExampleList.tsx";
-import styled, {ThemeProvider} from 'styled-components';
-import {lightTheme, darkTheme, GlobalStyles} from './type/themes.ts';
+import {GlobalStyles} from './type/themes.ts';
 import Footer from "./components/footer/Footer.tsx";
+import {
+    ButtonRendererView,
+    Container,
+    Content,
+    EditorPreviewContainer,
+    Input,
+    InputGroup,
+    PrimaryButton,
+    SecondaryButton,
+    Section,
+    SectionButtons,
+    SectionTitle,
+    SeparatorFooter,
+    ToolbarContainer
+} from './render.styles.ts';
 import {
     Example,
     ExampleCategory,
@@ -22,346 +37,81 @@ import RandomExampleSelector from "./components/example/RandomExampleSelector.ts
 import DOMPurify from 'dompurify';
 import {API_GITHUB, API_GITHUB_FINAL_MASTER} from "./api/api.ts";
 import {useGlobalAdvancedOptions} from "./type/context/GlobalUIAdvancedOptions.tsx";
-
-const Container = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    min-height: 100vh;
-    box-sizing: border-box;
-`;
-
-const SeparatorFooter = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    font-family: Arial, sans-serif;
-    min-height: 1vh;
-    box-sizing: border-box;
-`;
-
-const Content = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    width: 100%;
-    max-width: 1200px;
-    margin-top: 62px;
-    gap: 20px;
-    margin-bottom: 20px;
-
-    @media (max-width: 768px) {
-        margin-top: 80px;
-        flex-direction: column;
-    }
-`;
-
-const EditorPreviewContainer = styled.div`
-    display: flex;
-    flex: 1;
-    width: 100%;
-    gap: 20px;
-    justify-content: center;
-    align-items: stretch;
-
-    @media (max-width: 768px) {
-        flex-direction: column;
-    }
-`;
-
-const mediaQueries = {
-    phone: "(max-width: 640px)",
-    tablet: "(max-width: 1024px)",
-    fold: "(max-width: 360px) and (max-height: 640px)",
-    landscape: "(orientation: landscape) and (max-height: 640px)",
-};
-
-
-const ToolbarContainer = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-
-    @media ${mediaQueries.tablet} {
-        gap: 12px;
-    }
-
-    @media ${mediaQueries.fold} {
-        gap: 6px;
-        flex-direction: column;
-    }
-`;
-
-const Section = styled.div`
-    flex: 1 1 300px;
-    min-width: 280px;
-    background: ${({theme}) => theme.background};
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    border: 1px solid ${({theme}) => theme.border};
-    text-align: center;
-    transition: transform 0.2s;
-
-    @media ${mediaQueries.tablet} {
-        min-width: 240px;
-        padding: 16px;
-    }
-
-    @media ${mediaQueries.phone} {
-        flex: 1 1 100%;
-        min-width: 0;
-        padding: 12px;
-        border-radius: 8px;
-    }
-
-    @media ${mediaQueries.fold} {
-        padding: 8px;
-        border-radius: 6px;
-    }
-`;
-
-const SectionTitle = styled.h3`
-    font-size: 16px;
-    color: ${({theme}) => theme.text};
-    margin-bottom: 16px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-
-    @media ${mediaQueries.tablet} {
-        font-size: 14px;
-        margin-bottom: 12px;
-    }
-
-    @media ${mediaQueries.phone} {
-        font-size: 13px;
-        margin-bottom: 8px;
-    }
-
-    @media ${mediaQueries.fold} {
-        font-size: 12px;
-    }
-`;
-
-const InputGroup = styled.div`
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-
-    @media ${mediaQueries.tablet} {
-        gap: 12px;
-    }
-
-    @media ${mediaQueries.phone} {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-    }
-
-    @media ${mediaQueries.fold} {
-        gap: 6px;
-    }
-`;
-
-const Input = styled.input`
-    flex: 1;
-    padding: 14px;
-    border: 2px solid ${({theme}) => theme.border};
-    border-radius: 6px;
-    font-size: 14px;
-    transition: border 0.2s;
-    max-width: 300px;
-    background: ${({theme}) => theme.background};
-    color: ${({theme}) => theme.text};
-
-    @media ${mediaQueries.tablet} {
-        max-width: 250px;
-        font-size: 14px;
-    }
-
-    @media ${mediaQueries.phone} {
-        max-width: 100%;
-        padding: 12px;
-        font-size: 13px;
-    }
-
-    @media ${mediaQueries.fold} {
-        padding: 10px;
-        font-size: 12px;
-    }
-
-    &:focus {
-        border-color: ${({theme}) => theme.primary};
-        outline: none;
-        box-shadow: 0 0 0 2px rgb(99, 168, 241);
-    }
-`;
-
-const PrimaryButton = styled.button`
-    padding: 14px 24px;
-    background: ${({theme}) => theme.primary};
-    border: none;
-    border-radius: 6px;
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    flex-shrink: 0;
-    white-space: nowrap;
-    width: 100%;
-    min-height: 48px;
-
-    @media ${mediaQueries.tablet} {
-        padding: 12px 20px;
-        font-size: 14px;
-        min-height: 44px;
-    }
-
-    @media ${mediaQueries.phone} {
-        padding: 10px 16px;
-        font-size: 13px;
-        min-height: 40px;
-    }
-
-    @media ${mediaQueries.fold} {
-        padding: 8px 12px;
-        font-size: 12px;
-        min-height: 36px;
-    }
-
-
-    &:hover {
-        background: #0238f7;
-        transform: translateY(-1px);
-    }
-
-    &:active {
-        transform: translateY(0);
-    }
-
-    &:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-        background: ${({theme}) => theme.secondary};
-    }
-
-`;
-
-const SecondaryButton = styled(PrimaryButton)`
-    background: ${({theme}) => theme.secondary};
-    color: ${({theme}) => theme.codeText};
-
-    &:hover {
-        color: black;
-        background: #cbd5e1;
-    }
-`;
-
-
-const ButtonRendererView = styled(PrimaryButton)`
-    flex: 1 1 calc(25% - 9px); 
-    padding: 12px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 100px;
-
-    @media ${mediaQueries.tablet} {
-        flex: 1 1 calc(50% - 6px); 
-        padding: 10px;
-    }
-
-    @media ${mediaQueries.phone} {
-        flex: 1 1 100%; 
-        padding: 10px;
-        width: 100%;
-    }
-
-    @media ${mediaQueries.fold} {
-        padding: 8px;
-        border-radius: 6px;
-    }
-`;
-
-const SectionButtons = styled.div`
-    flex: 1 1 300px;
-    min-width: 280px;
-    background: ${({theme}) => theme.background};
-    border-radius: 12px;
-    padding: 15px;
-    text-align: center;
-    transition: transform 0.2s;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 12px;
-
-    @media ${mediaQueries.tablet} {
-        min-width: 240px;
-        padding: 16px;
-    }
-
-    @media ${mediaQueries.phone} {
-        flex: 1 1 100%;
-        min-width: 0;
-        padding: 12px;
-        border-radius: 8px;
-        justify-content: center;
-    }
-
-    @media ${mediaQueries.fold} {
-        padding: 8px;
-        border-radius: 6px;
-    }
-`;
-
-
+import {
+    getDefaultLanguage,
+    getHideThemeSelector,
+    getInitialLayoutId,
+    getLayoutById,
+    getSelectableLayoutsByMode,
+    getThemeByLayoutId,
+    resolveLayoutIdForModeSwitch
+} from "./assets/layouts/index.ts";
 
 const Render: React.FC = () => {
 
-    const [markdown, setMarkdown] = useState<string>('');
-    const [history, setHistory] = useState<string[]>([]);
-    const [currentHistoryIndex, setCurrentHistoryIndex] = useState<number>(-1);
-    const [messageError, setMessageError] = useState<string | null>(null);
+    const [selectedLayoutId, setSelectedLayoutId] = useState<string>(() =>
+        getInitialLayoutId(localStorage.getItem('selectedLayoutId'))
+    );
+    const selectedLayout = getLayoutById(selectedLayoutId) ?? getLayoutById(getInitialLayoutId(null));
+    const isDarkMode = selectedLayout?.mode === 'dark';
+    const activeTheme = getThemeByLayoutId(selectedLayout?.id ?? selectedLayoutId);
+    const hideThemeSelector = getHideThemeSelector();
+    const layoutOptions = getSelectableLayoutsByMode(isDarkMode ? 'dark' : 'light')
+        .map((layout) => ({id: layout.id, name: layout.name}));
 
-
-    const [isDarkMode, setisDarkMode] = useState<boolean>(() => {
-        const savedisDarkMode = localStorage.getItem('isDarkMode');
-        return savedisDarkMode ? JSON.parse(savedisDarkMode) : false;
-    });
-
+    const handleLayoutChange = (layoutId: string): void => {
+        setSelectedLayoutId(layoutId);
+        localStorage.setItem('selectedLayoutId', layoutId);
+    };
 
     const toggleisDarkMode = (): void => {
-        setisDarkMode((prev) => {
-            const newisDarkMode = !prev;
-            localStorage.setItem('isDarkMode', JSON.stringify(newisDarkMode));
-            return newisDarkMode;
-        });
+        const targetMode = isDarkMode ? 'light' : 'dark';
+        const nextLayoutId = resolveLayoutIdForModeSwitch(selectedLayoutId, targetMode);
+        handleLayoutChange(nextLayoutId);
     };
 
     const [filename, setFilename] = useState<string>('README.md');
     const [githubUsername, setGithubUsername] = useState<string>('');
     const [selectedView, setSelectedView] = useState<View>('both');
-    const [examples, setExamples] = useState<ExampleCategory[]>([]);
-
 
     const [language, setLanguage] = useState<Language>(() => {
         const savedLanguage = localStorage.getItem('language') as Language;
-        return savedLanguage && translations[savedLanguage] ? savedLanguage : 'en';
+        const defaultLanguage = getDefaultLanguage();
+        return savedLanguage && translations[savedLanguage] ? savedLanguage : defaultLanguage;
     });
+
+    const getInitialMarkdown = (lang: Language): string => {
+        const data = translations[lang] as TranslationData;
+        const initialExample = data?.examples?.[0]?.items?.[0];
+        const text = initialExample?.["example-text"];
+        return typeof text === 'string' ? text : '';
+    };
+
+    const [markdown, setMarkdown] = useState<string>(() => getInitialMarkdown(language));
+    const [history, setHistory] = useState<string[]>(() => {
+        const initial = getInitialMarkdown(language);
+        return initial ? [initial] : [];
+    });
+    const [currentHistoryIndex, setCurrentHistoryIndex] = useState<number>(() =>
+        getInitialMarkdown(language) ? 0 : -1
+    );
+    const [messageError, setMessageError] = useState<string | null>(null);
+
+    const [isFocusMode, setIsFocusMode] = useState<boolean>(() => {
+        const saved = localStorage.getItem('isFocusMode');
+        return saved ? JSON.parse(saved) : false;
+    });
+
+    const toggleFocusMode = (): void => {
+        setIsFocusMode(prev => {
+            const next = !prev;
+            localStorage.setItem('isFocusMode', JSON.stringify(next));
+            if (next) {
+                setSelectedView(bothView);
+            }
+            return next;
+        });
+    };
 
     const handleLanguageChange = (lang: Language): void => {
         setLanguage(lang);
@@ -369,6 +119,7 @@ const Render: React.FC = () => {
     };
 
     const langData = translations[language] as TranslationData;
+    const examples: ExampleCategory[] = langData?.examples || [];
 
 
     const addToHistory = (content: string): void => {
@@ -413,6 +164,124 @@ const Render: React.FC = () => {
         document.body.appendChild(element);
         element.click();
         document.body.removeChild(element);
+    };
+
+    const generatePdfFromPreview = async (mode: 'download' | 'open'): Promise<void> => {
+        if (!isFocusMode && selectedView === editorView) {
+            setSelectedView(bothView);
+            window.setTimeout(() => {
+                void generatePdfFromPreview(mode);
+            }, 150);
+            return;
+        }
+
+        const previewEl = document.getElementById('preview-to-print');
+        if (!previewEl) return;
+
+        const safeTitle = (filename || 'document')
+            .replace(/\.md$/i, '')
+            .replace(/[\\/:*?"<>|]+/g, '')
+            .trim() || 'document';
+
+        // Open the tab immediately to avoid popup blockers.
+        // Keep it blank (no intermediate "Generating..." page) and navigate to the PDF when ready.
+        const pdfTab = mode === 'open' ? window.open('about:blank', '_blank') : null;
+        if (mode === 'open' && !pdfTab) return;
+
+        // Create a "print-friendly" clone so the PDF includes the full content
+        // (the on-screen preview is scrollable with fixed height).
+        const clone = document.createElement('div');
+        clone.className = 'pdf-export';
+        clone.innerHTML = previewEl.innerHTML;
+        clone.style.background = '#ffffff';
+        clone.style.color = '#111111';
+        clone.style.padding = '24px';
+        clone.style.maxWidth = '900px';
+        clone.style.margin = '0 auto';
+        clone.style.boxSizing = 'border-box';
+        document.body.appendChild(clone);
+
+        const styleEl = document.createElement('style');
+        styleEl.setAttribute('data-pdf-export', 'true');
+        styleEl.textContent = `
+          .pdf-export { font-family: Arial, sans-serif; color: #111; }
+          .pdf-export h1, .pdf-export h2, .pdf-export h3, .pdf-export h4, .pdf-export h5, .pdf-export h6 {
+            margin: 18px 0 10px;
+            line-height: 1.25;
+            page-break-after: avoid;
+          }
+          .pdf-export p { margin: 10px 0; line-height: 1.6; }
+          .pdf-export ul, .pdf-export ol { margin: 10px 0 10px 20px; }
+          .pdf-export pre {
+            background: #f6f8fa;
+            padding: 12px;
+            border-radius: 6px;
+            overflow: visible;
+            white-space: pre-wrap;
+            word-break: break-word;
+            page-break-inside: avoid;
+          }
+          .pdf-export code {
+            background: #f6f8fa;
+            padding: 0.2em 0.35em;
+            border-radius: 4px;
+          }
+          .pdf-export blockquote {
+            margin: 16px 0;
+            padding: 0 1em;
+            border-left: 4px solid #ddd;
+            color: #444;
+            page-break-inside: avoid;
+          }
+          .pdf-export table { width: 100%; border-collapse: collapse; page-break-inside: avoid; }
+          .pdf-export th, .pdf-export td { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+          .pdf-export img { max-width: 100%; height: auto; page-break-inside: avoid; }
+          .pdf-export a { color: #0969da; text-decoration: none; }
+        `;
+        document.head.appendChild(styleEl);
+
+        try {
+            const mod = await import('html2pdf.js');
+            const html2pdf = mod.default;
+
+            const worker = html2pdf()
+                .set({
+                    margin: 10,
+                    filename: `${safeTitle}.pdf`,
+                    image: {type: 'jpeg', quality: 0.98},
+                    html2canvas: {scale: 2, useCORS: true, backgroundColor: '#ffffff'},
+                    jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'},
+                    pagebreak: {mode: ['avoid-all', 'css', 'legacy']},
+                })
+                .from(clone);
+
+            if (mode === 'download') {
+                await worker.save();
+            } else {
+                const pdf = await worker.toPdf().get('pdf');
+                const blob = pdf.output('blob');
+                const blobUrl = URL.createObjectURL(blob);
+                if (pdfTab) {
+                    // Use replace to avoid keeping about:blank in history.
+                    pdfTab.location.replace(blobUrl);
+                }
+            }
+        } catch (err) {
+            if (pdfTab) pdfTab.close();
+            // Keep console visibility for debugging
+            console.error('PDF generation failed:', err);
+        } finally {
+            document.body.removeChild(clone);
+            document.head.removeChild(styleEl);
+        }
+    };
+
+    const exportPreviewToPdf = (): void => {
+        void generatePdfFromPreview('download');
+    };
+
+    const viewPreviewPdf = (): void => {
+        void generatePdfFromPreview('open');
     };
 
     const fetchGithubMarkdown = async (): Promise<void> => {
@@ -505,10 +374,10 @@ const Render: React.FC = () => {
                 const sanitizedContent: string = DOMPurify.sanitize(content) as string;
                 setMarkdown(sanitizedContent);
                 addToHistory(sanitizedContent);
-            })
-            .catch(error => {
-                console.error('Error reading file:', error);
             });
+           // .catch(error => {
+             //   console.error('Error reading file:', error);
+           // });
     };
 
 
@@ -521,41 +390,33 @@ const Render: React.FC = () => {
         });
     };
 
-    useEffect(() => {
-
-        if (!markdown) {
-            const initialExample = langData?.examples[0]?.items[0];
-            const initialMarkdown = initialExample?.["example-text"] || '';
-
-            setMarkdown(initialMarkdown);
-            addToHistory(initialMarkdown);
-        }
-
-        setExamples(langData?.examples || []);
-
-    }, [langData.examples]);
-
     const {isGlobalUiAdvancedOptions, setGlobalUiAdvancedOptions} = useGlobalAdvancedOptions();
 
 
     return (
-        <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
+        <ThemeProvider theme={activeTheme}>
             <GlobalStyles/>
-            <Container>
+            <Container $isFocusMode={isFocusMode}>
                 <Header
                     language={language}
                     onChangeLanguage={handleLanguageChange}
+                    selectedLayoutId={selectedLayoutId}
+                    onChangeLayout={handleLayoutChange}
+                    layoutOptions={layoutOptions}
+                    hideThemeSelector={hideThemeSelector}
                     isDarkMode={isDarkMode}
                     onToggleisDarkMode={toggleisDarkMode}
+                    isFocusMode={isFocusMode}
+                    onToggleFocusMode={toggleFocusMode}
                 />
-                <Content>
-                    {messageError != null && (
+                <Content $isFocusMode={isFocusMode}>
+                    {!isFocusMode && messageError != null && (
                         <ToolbarContainer>
                             <Section style={{border: 'none', boxShadow: 'none', background:'#ec5353'}}>
                                 <span style={{color: 'white'}}>{messageError}</span>
                             </Section>
                         </ToolbarContainer>)}
-                    <ToolbarContainer>
+                    {!isFocusMode && <ToolbarContainer>
                         {!isGlobalUiAdvancedOptions ? (
                             <>
                                 <Section>
@@ -564,7 +425,9 @@ const Render: React.FC = () => {
                                         <Input
                                             placeholder={langData.textFilenamePlaceholder}
                                             value={filename}
-                                            onChange={(e) => setFilename(e.target.value)}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                                setFilename(e.target.value)
+                                            }
                                         />
                                         <PrimaryButton onClick={handleDownload}>
                                             {langData.textDownload}
@@ -577,7 +440,9 @@ const Render: React.FC = () => {
                                         <Input
                                             placeholder={langData.textGitHubUsername}
                                             value={githubUsername}
-                                            onChange={(e) => setGithubUsername(e.target.value)}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                                setGithubUsername(e.target.value)
+                                            }
                                         />
                                         <PrimaryButton onClick={fetchGithubMarkdown}>
                                             {langData.textFetchREADME}
@@ -599,6 +464,18 @@ const Render: React.FC = () => {
                                         </SecondaryButton>
                                         <SecondaryButton onClick={() => inputFileRef.current?.click()}>
                                             {langData.textUpload}
+                                        </SecondaryButton>
+                                        <SecondaryButton
+                                            onClick={viewPreviewPdf}
+                                            disabled={!markdown || markdown.trim().length === 0}
+                                        >
+                                            {langData.textViewPDF}
+                                        </SecondaryButton>
+                                        <SecondaryButton
+                                            onClick={exportPreviewToPdf}
+                                            disabled={!markdown || markdown.trim().length === 0}
+                                        >
+                                            {langData.textExportPDF}
                                         </SecondaryButton>
                                         <Input
                                             type="file"
@@ -640,8 +517,8 @@ const Render: React.FC = () => {
                                 </Section>
                             </>
                         )}
-                    </ToolbarContainer>
-                    <ToolbarContainer>
+                    </ToolbarContainer>}
+                    {!isFocusMode && <ToolbarContainer>
                         <Section>
                             <SectionTitle>{langData.textViewMode}</SectionTitle>
                             <SectionButtons>
@@ -662,9 +539,9 @@ const Render: React.FC = () => {
                                 </ButtonRendererView>
                             </SectionButtons>
                         </Section>
-                    </ToolbarContainer>
-                    <EditorPreviewContainer>
-                        {(selectedView === 'editor' || selectedView === 'both') && (
+                    </ToolbarContainer>}
+                    <EditorPreviewContainer $isFocusMode={isFocusMode}>
+                        {(isFocusMode || selectedView === 'editor' || selectedView === 'both') && (
                             <Editor
                                 markdown={markdown}
                                 onChange={handleChange}
@@ -673,17 +550,18 @@ const Render: React.FC = () => {
                             />
                         )}
 
-                        {(selectedView === 'preview' || selectedView === 'both') && (
+                        {(isFocusMode || selectedView === 'preview' || selectedView === 'both') && (
                             <Preview
                                 markdown={markdown}
                                 isDarkMode={isDarkMode}
+                                containerId="preview-to-print"
                             />
                         )}
                     </EditorPreviewContainer>
                 </Content>
             </Container>
             <SeparatorFooter>
-                <Footer isDarkMode={isDarkMode}/>
+                <Footer/>
             </SeparatorFooter>
         </ThemeProvider>
     );

@@ -16,6 +16,8 @@ export interface TranslationData {
     textAdvancedOptions: string;
     textNormalOptions: string;
     textOptions: string;
+    textFocusMode: string;
+    textShowTools: string;
     textAreaPlaceholderEditor: string;
     textBack: string;
     textGitHubUsername: string;
@@ -29,6 +31,8 @@ export interface TranslationData {
     textRedo: string;
     textClean: string;
     textUpload: string;
+    textExportPDF: string;
+    textViewPDF: string;
     textViewMode: string;
     textPreview: string;
     textBoth: string;
@@ -83,6 +87,7 @@ export interface ExampleListProps {
 export interface PreviewProps {
     markdown: string;
     isDarkMode?: boolean;
+    containerId?: string;
 }
 
 
@@ -96,8 +101,17 @@ export interface EditorProps {
 export interface NavbarProps {
     language: Language;
     onChangeLanguage: (lang: Language) => void;
+    selectedLayoutId: string;
+    onChangeLayout: (layoutId: string) => void;
+    layoutOptions: Array<{
+        id: string;
+        name: string;
+    }>;
+    hideThemeSelector: boolean;
     isDarkMode: boolean;
     onToggleisDarkMode: () => void;
+    isFocusMode: boolean;
+    onToggleFocusMode: () => void;
 }
 
 export interface ExampleListCustomProps extends ExampleListProps {

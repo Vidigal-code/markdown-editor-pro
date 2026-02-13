@@ -5,6 +5,8 @@ declare module 'styled-components' {
     export interface DefaultTheme {
         codebackground: string;
         prebackground: string;
+        backgroundfooter: string;
+        backgroundheader: string;
         background: string;
         text: string;
         primary: string;
@@ -59,6 +61,8 @@ export const darkTheme = {
     linka: '#58a6ff'
 };
 
+export type AppTheme = typeof lightTheme;
+
 
 
 export const GlobalStyles = createGlobalStyle`
@@ -70,12 +74,14 @@ export const GlobalStyles = createGlobalStyle`
         padding: 0;
         box-sizing: border-box;
         font-family: Arial, sans-serif;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center; 
+        display: block;
         min-height: 100vh; 
         overflow-x: hidden;
+    }
+
+    #root {
+        width: 100%;
+        min-height: 100vh;
     }
 
     @media (min-width: 1920px) {

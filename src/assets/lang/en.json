@@ -1,0 +1,242 @@
+{
+  "menu": {
+    "pt": "Portuguese",
+    "en": "English",
+    "es": "Spanish"
+  },
+  "textMessageExampleList": "List of Examples",
+  "textMessageCustomExampleList": "Custom Examples List",
+  "textErrorGitHubUserRequired": "GitHub username is required.",
+  "textErrorReadmeNotFound": "README not found or repository does not exist",
+  "textSelectMarkdownFile": "Please select a Markdown (.md) file.",
+  "textAdvancedOptions": "Advanced Options",
+  "textNormalOptions": "Normal Options",
+  "textOptions": "Options",
+  "textFocusMode": "Focus mode",
+  "textShowTools": "Show tools",
+  "textBack": "Back",
+  "textAreaPlaceholderEditor": "Enter your markdown here...",
+  "textGitHubUsername": "GitHub Username",
+  "textFilenamePlaceholder": "Filename",
+  "textFileManagement": "File Management",
+  "textDownload": "Download",
+  "textGitHubIntegration": "GitHub Integration",
+  "textFetchREADME": "Fetch README",
+  "textEditorActions": "Editor Actions",
+  "textUndo": "Undo",
+  "textRedo": "Redo",
+  "textClean": "Clean",
+  "textUpload": "Upload",
+  "textExportPDF": "Export PDF",
+  "textViewPDF": "View PDF",
+  "textViewMode": "View Mode",
+  "textPreview": "Preview",
+  "textBoth": "Both",
+  "textEditor": "Editor",
+  "textExamples": {
+    "textEdit": "Edit",
+    "textSaveEdit": "Save Edit",
+    "textSelected": "Selected",
+    "textCategory": "Category",
+    "textSave": "Save",
+    "textCancel": "Cancel",
+    "textRandom": "Random",
+    "textNoexamplesInCategory": "No examples in category",
+    "textRandomExampleSelectedFrom": "Random example selected from",
+    "textNoexamplesAvailable": "No examples available",
+    "textCategoryNotFound": "Category not found",
+    "textCategoryName": "Category Name",
+    "textAddNewCategory": "Add New Category",
+    "textAddCategory": "Add Category",
+    "textAllExamples": "All Examples",
+    "textAddItem": "Add Item",
+    "textItemTitle": "Item Title",
+    "textAddNewItem": "Add New Item",
+    "textSaveCurrentEditorContent": "Save Current Editor Content",
+    "textClean": "Clean"
+  },
+  "examples": [
+    {
+      "id": 0,
+      "category": "Basic Markdown",
+      "items": [
+        {
+          "id": 0,
+          "title": "Basic Markdown Example",
+          "example-text": "# Basic Markdown\n\nThis is a basic example of Markdown syntax:\n\n- **Bold Text**\n- *Italic Text*\n- [Link](https://example.com)\n\n## Subheading\n1. First item\n2. Second item\n\n```python\n# Example of Python code\nprint('Hello World!')\n```",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "category": "GitHub Flavored",
+      "items": [
+        {
+          "id": 0,
+          "title": "GitHub Flavored Markdown",
+          "example-text": "# GitHub Flavored Markdown\n\n## Features\n- Tables\n- Task Lists\n\n| Feature | Description |\n|---------|-------------|\n| Table   | Displays data in rows and columns |\n\n- [ ] Task 1\n- [x] Task 2 (completed)",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "category": "Templates",
+      "items": [
+        {
+          "id": 0,
+          "title": "Document Template",
+          "example-text": "# Project Title\n\n## Description\nProvide a brief description of the project.\n\n## Installation\n1. Step 1\n2. Step 2\n\n## Usage\nInstructions on how to use the project.",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "category": "Lists",
+      "items": [
+        {
+          "id": 0,
+          "title": "Ordered and Unordered Lists",
+          "example-text": "## Unordered\n- Item A\n- Item B\n\n## Ordered\n1. First\n2. Second",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "category": "Code Blocks",
+      "items": [
+        {
+          "id": 0,
+          "title": "JavaScript Example",
+          "example-text": "```javascript\nfunction greet(name) {\n  console.log(`Hello, ${name}!`);\n}\ngreet('World');\n```",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "category": "Code Blocks",
+      "items": [
+        {
+          "id": 0,
+          "title": "HTML Example",
+          "example-text": "```html\n<!DOCTYPE html>\n<html>\n<head><title>Page</title></head>\n<body><h1>Hello</h1></body>\n</html>\n```",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "category": "Quotes",
+      "items": [
+        {
+          "id": 0,
+          "title": "Blockquote Example",
+          "example-text": "> This is a blockquote.\n> It spans multiple lines.\n\nUse it for citations or notes.",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "category": "Images",
+      "items": [
+        {
+          "id": 0,
+          "title": "Image Example",
+          "example-text": "![Alt text](https://via.placeholder.com/150)\n\nAbove is an example image.",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "category": "Advanced Markdown",
+      "items": [
+        {
+          "id": 0,
+          "title": "Inline Code and Escaping",
+          "example-text": "`inline code` and \\*escaped asterisks\\* are shown here.",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "category": "Tables",
+      "items": [
+        {
+          "id": 0,
+          "title": "Markdown Table",
+          "example-text": "| Name | Age |\n|------|-----|\n| Ana  | 24  |\n| João | 30  |",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "category": "Headers",
+      "items": [
+        {
+          "id": 0,
+          "title": "Header Levels",
+          "example-text": "# H1\n## H2\n### H3\n#### H4\n##### H5\n###### H6",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "category": "Links",
+      "items": [
+        {
+          "id": 0,
+          "title": "Link Variations",
+          "example-text": "[OpenAI](https://openai.com) or <https://openai.com> both work.",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "category": "Checklists",
+      "items": [
+        {
+          "id": 0,
+          "title": "To-do List",
+          "example-text": "- [x] Write Code\n- [ ] Review Code\n- [ ] Deploy",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "category": "Mixed Content",
+      "items": [
+        {
+          "id": 0,
+          "title": "Mixed Example",
+          "example-text": "# Title\nSome text with `inline code` and a [link](https://example.com).\n\n```bash\necho Hello\n```",
+          "example-file": ""
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "category": "User Guide",
+      "items": [
+        {
+          "id": 0,
+          "title": "Basic User Guide Template",
+          "example-text": "# User Guide\n\n## Intro\nWelcome!\n\n## Features\n- Easy\n- Fast\n\n## Support\nContact us at [support@example.com](mailto:support@example.com).",
+          "example-file": ""
+        }
+      ]
+    }
+  ]
+}
+
+
