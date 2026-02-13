@@ -251,10 +251,11 @@ const Render: React.FC = () => {
 
         const renderHost = document.createElement('div');
         renderHost.setAttribute('data-pdf-render-host', 'true');
-        renderHost.style.position = 'absolute';
-        renderHost.style.left = '0';
-        // Use positive coordinates outside viewport to keep element renderable to html2canvas.
-        renderHost.style.top = `${window.scrollY + window.innerHeight + 2000}px`;
+        // Keep capture source out of viewport so nothing is visibly rendered in the page.
+        // Fixed positioning avoids pushing page height and visual artifacts below the site.
+        renderHost.style.position = 'fixed';
+        renderHost.style.left = `${window.innerWidth + 100}px`;
+        renderHost.style.top = '0';
         renderHost.style.width = '1px';
         renderHost.style.height = '1px';
         renderHost.style.overflow = 'visible';
