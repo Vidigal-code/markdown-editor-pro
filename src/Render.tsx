@@ -166,40 +166,102 @@ const Render: React.FC = () => {
         document.body.removeChild(element);
     };
 
+    const waitForElementById = (elementId: string, timeoutMs = 1500): Promise<HTMLElement | null> => {
+        return new Promise((resolve) => {
+            const startedAt = Date.now();
+
+            const check = (): void => {
+                const foundElement = document.getElementById(elementId);
+                if (foundElement) {
+                    resolve(foundElement);
+                    return;
+                }
+
+                if (Date.now() - startedAt >= timeoutMs) {
+                    resolve(null);
+                    return;
+                }
+
+                window.requestAnimationFrame(check);
+            };
+
+            check();
+        });
+    };
+
+    const waitForImagesInElement = async (container: HTMLElement, timeoutMs = 5000): Promise<void> => {
+        const images = Array.from(container.querySelectorAll('img'));
+        if (images.length === 0) return;
+
+        await Promise.all(images.map((img) => new Promise<void>((resolve) => {
+            if (img.complete) {
+                resolve();
+                return;
+            }
+
+            const onDone = (): void => {
+                img.removeEventListener('load', onDone);
+                img.removeEventListener('error', onDone);
+                resolve();
+            };
+
+            img.addEventListener('load', onDone, {once: true});
+            img.addEventListener('error', onDone, {once: true});
+
+            window.setTimeout(onDone, timeoutMs);
+        })));
+    };
+
     const generatePdfFromPreview = async (mode: 'download' | 'open'): Promise<void> => {
+        // Open the tab immediately to avoid popup blockers.
+        // Keep it blank (no intermediate "Generating..." page) and navigate to the PDF when ready.
+        const pdfTab = mode === 'open' ? window.open('about:blank', '_blank') : null;
+        if (mode === 'open' && !pdfTab) return;
+
         if (!isFocusMode && selectedView === editorView) {
             setSelectedView(bothView);
-            window.setTimeout(() => {
-                void generatePdfFromPreview(mode);
-            }, 150);
-            return;
         }
 
-        const previewEl = document.getElementById('preview-to-print');
-        if (!previewEl) return;
+        const previewEl = await waitForElementById('preview-to-print');
+        if (!previewEl) {
+            if (pdfTab) pdfTab.close();
+            return;
+        }
 
         const safeTitle = (filename || 'document')
             .replace(/\.md$/i, '')
             .replace(/[\\/:*?"<>|]+/g, '')
             .trim() || 'document';
 
-        // Open the tab immediately to avoid popup blockers.
-        // Keep it blank (no intermediate "Generating..." page) and navigate to the PDF when ready.
-        const pdfTab = mode === 'open' ? window.open('about:blank', '_blank') : null;
-        if (mode === 'open' && !pdfTab) return;
-
         // Create a "print-friendly" clone so the PDF includes the full content
         // (the on-screen preview is scrollable with fixed height).
         const clone = document.createElement('div');
         clone.className = 'pdf-export';
         clone.innerHTML = previewEl.innerHTML;
+        clone.setAttribute('aria-hidden', 'true');
         clone.style.background = '#ffffff';
         clone.style.color = '#111111';
         clone.style.padding = '24px';
         clone.style.maxWidth = '900px';
         clone.style.margin = '0 auto';
         clone.style.boxSizing = 'border-box';
-        document.body.appendChild(clone);
+        clone.style.position = 'static';
+        clone.style.width = '900px';
+        clone.style.pointerEvents = 'auto';
+
+        const renderHost = document.createElement('div');
+        renderHost.setAttribute('data-pdf-render-host', 'true');
+        renderHost.style.position = 'absolute';
+        renderHost.style.left = '0';
+        // Use positive coordinates outside viewport to keep element renderable to html2canvas.
+        renderHost.style.top = `${window.scrollY + window.innerHeight + 2000}px`;
+        renderHost.style.width = '1px';
+        renderHost.style.height = '1px';
+        renderHost.style.overflow = 'visible';
+        renderHost.style.background = 'transparent';
+        renderHost.style.pointerEvents = 'none';
+        renderHost.appendChild(clone);
+        document.body.appendChild(renderHost);
 
         const styleEl = document.createElement('style');
         styleEl.setAttribute('data-pdf-export', 'true');
@@ -209,9 +271,16 @@ const Render: React.FC = () => {
             margin: 18px 0 10px;
             line-height: 1.25;
             page-break-after: avoid;
+            break-after: avoid-page;
+            page-break-inside: avoid;
+            break-inside: avoid-page;
           }
           .pdf-export p { margin: 10px 0; line-height: 1.6; }
           .pdf-export ul, .pdf-export ol { margin: 10px 0 10px 20px; }
+          .pdf-export li {
+            page-break-inside: avoid;
+            break-inside: avoid-page;
+          }
           .pdf-export pre {
             background: #f6f8fa;
             padding: 12px;
@@ -241,6 +310,12 @@ const Render: React.FC = () => {
         document.head.appendChild(styleEl);
 
         try {
+            // Wait one frame so the browser applies layout/styles before capture.
+            await new Promise<void>((resolve) => {
+                window.requestAnimationFrame(() => resolve());
+            });
+            await waitForImagesInElement(clone);
+
             const mod = await import('html2pdf.js');
             const html2pdf = mod.default;
 
@@ -249,9 +324,21 @@ const Render: React.FC = () => {
                     margin: 10,
                     filename: `${safeTitle}.pdf`,
                     image: {type: 'jpeg', quality: 0.98},
-                    html2canvas: {scale: 2, useCORS: true, backgroundColor: '#ffffff'},
+                    pagebreak: {
+                        mode: ['css', 'legacy'],
+                        avoid: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'blockquote', 'table', 'img', 'li']
+                    },
+                    html2canvas: {
+                        scale: 2,
+                        useCORS: true,
+                        backgroundColor: '#ffffff',
+                        scrollX: 0,
+                        scrollY: 0,
+                        windowWidth: Math.max(clone.scrollWidth, 900),
+                        windowHeight: Math.max(clone.scrollHeight, 1200)
+                    },
                     jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'},
-                })
+                } as any)
                 .from(clone);
 
             if (mode === 'download') {
@@ -264,13 +351,16 @@ const Render: React.FC = () => {
                     // Use replace to avoid keeping about:blank in history.
                     pdfTab.location.replace(blobUrl);
                 }
+                window.setTimeout(() => {
+                    URL.revokeObjectURL(blobUrl);
+                }, 60_000);
             }
         } catch (err) {
             if (pdfTab) pdfTab.close();
             // Keep console visibility for debugging
             console.error('PDF generation failed:', err);
         } finally {
-            document.body.removeChild(clone);
+            document.body.removeChild(renderHost);
             document.head.removeChild(styleEl);
         }
     };
