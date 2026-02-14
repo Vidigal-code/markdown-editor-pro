@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {ThemeProvider} from 'styled-components';
 import translations from './assets/lang/index.ts';
 import Editor from './components/editor/Editor.tsx';
@@ -15,9 +15,6 @@ import {
     ButtonRendererView,
     Container,
     Content,
-    EditorModeBar,
-    EditorModeButton,
-    EditorModeButtons,
     EditorPreviewContainer,
     Input,
     InputGroup,
@@ -32,7 +29,6 @@ import {
 import {
     Example,
     ExampleCategory,
-    EditorTab,
     TranslationData,
     Language,
     View,
@@ -96,8 +92,6 @@ const Render: React.FC = () => {
     };
 
     const [markdown, setMarkdown] = useState<string>(() => getInitialMarkdown(language));
-    const [customCss, setCustomCss] = useState<string>('');
-    const [activeEditorTab, setActiveEditorTab] = useState<EditorTab>('markdown');
     const [history, setHistory] = useState<string[]>(() => {
         const initial = getInitialMarkdown(language);
         return initial ? [initial] : [];
@@ -105,6 +99,8 @@ const Render: React.FC = () => {
     const [currentHistoryIndex, setCurrentHistoryIndex] = useState<number>(() =>
         getInitialMarkdown(language) ? 0 : -1
     );
+    const historyRef = useRef<string[]>(history);
+    const currentHistoryIndexRef = useRef<number>(currentHistoryIndex);
     const [messageError, setMessageError] = useState<string | null>(null);
 
     const [isFocusMode, setIsFocusMode] = useState<boolean>(() => {
@@ -132,13 +128,35 @@ const Render: React.FC = () => {
     const examples: ExampleCategory[] = langData?.examples || [];
 
 
+    useEffect(() => {
+        historyRef.current = history;
+    }, [history]);
+
+    useEffect(() => {
+        currentHistoryIndexRef.current = currentHistoryIndex;
+    }, [currentHistoryIndex]);
+
     const addToHistory = (content: string): void => {
-        if (content !== history[currentHistoryIndex]) {
-            const newHistory = history.slice(0, currentHistoryIndex + 1);
-            newHistory.push(content);
-            setHistory(newHistory);
-            setCurrentHistoryIndex(newHistory.length - 1);
+        const MAX_HISTORY_ITEMS = 250;
+        const prevHistory = historyRef.current;
+        const prevIndex = currentHistoryIndexRef.current;
+
+        if (content === prevHistory[prevIndex]) {
+            return;
         }
+
+        const sliced = prevHistory.slice(0, prevIndex + 1);
+        sliced.push(content);
+
+        const trimmedHistory = sliced.length > MAX_HISTORY_ITEMS
+            ? sliced.slice(sliced.length - MAX_HISTORY_ITEMS)
+            : sliced;
+
+        const nextIndex = trimmedHistory.length - 1;
+        historyRef.current = trimmedHistory;
+        currentHistoryIndexRef.current = nextIndex;
+        setHistory(trimmedHistory);
+        setCurrentHistoryIndex(nextIndex);
     };
 
     const handleChange = (value: string): void => {
@@ -209,13 +227,14 @@ const Render: React.FC = () => {
         clone.innerHTML = previewEl.innerHTML;
         clone.querySelectorAll(`style[${PREVIEW_STYLE_TAG_ATTR}]`).forEach((previewStyle) => previewStyle.remove());
 
-        const previewScopedCss = getScopedMarkdownCss(customCss, `.pdf-export .${PREVIEW_SCOPE_CLASS}`);
+        const previewScopedCss = getScopedMarkdownCss(undefined, `.pdf-export .${PREVIEW_SCOPE_CLASS}`);
         const shouldAutoPrint = options?.autoPrint === true;
         const shouldAutoCloseAfterPrint = options?.autoCloseAfterPrint === true;
         const isPdfMode = options?.forPdf === true;
         const documentTitle = safeTitle;
-        const pageMargin = isPdfMode ? '0' : '12mm';
-        const exportPadding = isPdfMode ? '12mm' : '0';
+        const pageMargin = '12mm';
+        const exportPadding = '0';
+        const exportMaxWidth = isPdfMode ? '100%' : '190mm';
 
         return `
 <!doctype html>
@@ -234,7 +253,7 @@ const Render: React.FC = () => {
     .pdf-export {
       box-sizing: border-box;
       width: 100%;
-      max-width: 190mm;
+      max-width: ${exportMaxWidth};
       margin: 0 auto;
       padding: ${exportPadding};
       background: #ffffff;
@@ -603,34 +622,11 @@ const Render: React.FC = () => {
                             </SectionButtons>
                         </Section>
                     </ToolbarContainer>}
-                    {(isFocusMode || selectedView === 'editor' || selectedView === 'both') && (
-                        <EditorModeBar>
-                            <EditorModeButtons>
-                                <EditorModeButton
-                                    type="button"
-                                    $active={activeEditorTab === 'markdown'}
-                                    onClick={() => setActiveEditorTab('markdown')}
-                                >
-                                    {langData.textMarkdownTab}
-                                </EditorModeButton>
-                                <EditorModeButton
-                                    type="button"
-                                    $active={activeEditorTab === 'css'}
-                                    onClick={() => setActiveEditorTab('css')}
-                                >
-                                    {langData.textCssTab}
-                                </EditorModeButton>
-                            </EditorModeButtons>
-                        </EditorModeBar>
-                    )}
                     <EditorPreviewContainer $isFocusMode={isFocusMode}>
                         {(isFocusMode || selectedView === 'editor' || selectedView === 'both') && (
                             <Editor
                                 markdown={markdown}
                                 onChange={handleChange}
-                                customCss={customCss}
-                                onChangeCss={setCustomCss}
-                                activeTab={activeEditorTab}
                                 isDarkMode={isDarkMode}
                                 language={language}
                             />
@@ -641,7 +637,6 @@ const Render: React.FC = () => {
                                 markdown={markdown}
                                 isDarkMode={isDarkMode}
                                 containerId="preview-to-print"
-                                customCss={customCss}
                             />
                         )}
                     </EditorPreviewContainer>
