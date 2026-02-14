@@ -2,7 +2,11 @@ import React, {useState, useRef} from 'react';
 import {ThemeProvider} from 'styled-components';
 import translations from './assets/lang/index.ts';
 import Editor from './components/editor/Editor.tsx';
-import Preview from './components/preview/Preview.tsx';
+import Preview, {
+    getScopedMarkdownCss,
+    PREVIEW_SCOPE_CLASS,
+    PREVIEW_STYLE_TAG_ATTR
+} from './components/preview/Preview.tsx';
 import Header from './components/header/Header.tsx';
 import ExampleList from "./components/example/ExampleList.tsx";
 import {GlobalStyles} from './type/themes.ts';
@@ -11,6 +15,9 @@ import {
     ButtonRendererView,
     Container,
     Content,
+    EditorModeBar,
+    EditorModeButton,
+    EditorModeButtons,
     EditorPreviewContainer,
     Input,
     InputGroup,
@@ -25,6 +32,7 @@ import {
 import {
     Example,
     ExampleCategory,
+    EditorTab,
     TranslationData,
     Language,
     View,
@@ -88,6 +96,8 @@ const Render: React.FC = () => {
     };
 
     const [markdown, setMarkdown] = useState<string>(() => getInitialMarkdown(language));
+    const [customCss, setCustomCss] = useState<string>('');
+    const [activeEditorTab, setActiveEditorTab] = useState<EditorTab>('markdown');
     const [history, setHistory] = useState<string[]>(() => {
         const initial = getInitialMarkdown(language);
         return initial ? [initial] : [];
@@ -189,42 +199,105 @@ const Render: React.FC = () => {
         });
     };
 
-    const waitForImagesInElement = async (container: HTMLElement, timeoutMs = 5000): Promise<void> => {
-        const images = Array.from(container.querySelectorAll('img'));
-        if (images.length === 0) return;
+    const buildExportDocumentHtml = (
+        previewEl: HTMLElement,
+        safeTitle: string,
+        options?: {autoPrint?: boolean; autoCloseAfterPrint?: boolean; forPdf?: boolean}
+    ): string => {
+        const clone = document.createElement('div');
+        clone.className = 'pdf-export';
+        clone.innerHTML = previewEl.innerHTML;
+        clone.querySelectorAll(`style[${PREVIEW_STYLE_TAG_ATTR}]`).forEach((previewStyle) => previewStyle.remove());
 
-        await Promise.all(images.map((img) => new Promise<void>((resolve) => {
-            if (img.complete) {
-                resolve();
-                return;
-            }
+        const previewScopedCss = getScopedMarkdownCss(customCss, `.pdf-export .${PREVIEW_SCOPE_CLASS}`);
+        const shouldAutoPrint = options?.autoPrint === true;
+        const shouldAutoCloseAfterPrint = options?.autoCloseAfterPrint === true;
+        const isPdfMode = options?.forPdf === true;
+        const documentTitle = safeTitle;
+        const pageMargin = isPdfMode ? '0' : '12mm';
+        const exportPadding = isPdfMode ? '12mm' : '0';
 
-            const onDone = (): void => {
-                img.removeEventListener('load', onDone);
-                img.removeEventListener('error', onDone);
-                resolve();
-            };
-
-            img.addEventListener('load', onDone, {once: true});
-            img.addEventListener('error', onDone, {once: true});
-
-            window.setTimeout(onDone, timeoutMs);
-        })));
+        return `
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>${documentTitle}</title>
+  <style>
+    @page { size: A4; margin: ${pageMargin}; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+    }
+    .pdf-export {
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 190mm;
+      margin: 0 auto;
+      padding: ${exportPadding};
+      background: #ffffff;
+    }
+    ${previewScopedCss}
+    .pdf-export h1, .pdf-export h2, .pdf-export h3, .pdf-export h4, .pdf-export h5, .pdf-export h6 {
+      page-break-after: avoid;
+      break-after: avoid-page;
+      page-break-inside: avoid;
+      break-inside: avoid-page;
+    }
+    .pdf-export li, .pdf-export pre, .pdf-export blockquote, .pdf-export table, .pdf-export img {
+      page-break-inside: avoid;
+      break-inside: avoid-page;
+    }
+  </style>
+</head>
+<body>
+  ${clone.outerHTML}
+  <script>
+    (function () {
+      var shouldAutoPrint = ${shouldAutoPrint ? 'true' : 'false'};
+      document.title = ${JSON.stringify(safeTitle)};
+      if (!shouldAutoPrint) return;
+      var imgs = Array.prototype.slice.call(document.images || []);
+      var waitForImages = imgs.map(function (img) {
+        return new Promise(function (resolve) {
+          if (img.complete) {
+            resolve();
+            return;
+          }
+          var done = function () {
+            img.removeEventListener('load', done);
+            img.removeEventListener('error', done);
+            resolve();
+          };
+          img.addEventListener('load', done, { once: true });
+          img.addEventListener('error', done, { once: true });
+          setTimeout(done, 5000);
+        });
+      });
+      Promise.all(waitForImages).finally(function () {
+        window.focus();
+        window.print();
+      });
+      if (${shouldAutoCloseAfterPrint ? 'true' : 'false'}) {
+        window.addEventListener('afterprint', function () {
+          window.close();
+        }, { once: true });
+      }
+    })();
+  <\/script>
+</body>
+</html>`;
     };
 
-    const generatePdfFromPreview = async (mode: 'download' | 'open'): Promise<void> => {
-        // Open the tab immediately to avoid popup blockers.
-        // Keep it blank (no intermediate "Generating..." page) and navigate to the PDF when ready.
-        const pdfTab = mode === 'open' ? window.open('about:blank', '_blank') : null;
-        if (mode === 'open' && !pdfTab) return;
-
+    const generatePdfFromPreview = async (): Promise<void> => {
         if (!isFocusMode && selectedView === editorView) {
             setSelectedView(bothView);
         }
 
         const previewEl = await waitForElementById('preview-to-print');
         if (!previewEl) {
-            if (pdfTab) pdfTab.close();
             return;
         }
 
@@ -233,145 +306,45 @@ const Render: React.FC = () => {
             .replace(/[\\/:*?"<>|]+/g, '')
             .trim() || 'document';
 
-        // Create a "print-friendly" clone so the PDF includes the full content
-        // (the on-screen preview is scrollable with fixed height).
-        const clone = document.createElement('div');
-        clone.className = 'pdf-export';
-        clone.innerHTML = previewEl.innerHTML;
-        clone.setAttribute('aria-hidden', 'true');
-        clone.style.background = '#ffffff';
-        clone.style.color = '#111111';
-        clone.style.padding = '24px';
-        clone.style.maxWidth = '900px';
-        clone.style.margin = '0 auto';
-        clone.style.boxSizing = 'border-box';
-        clone.style.position = 'static';
-        clone.style.width = '900px';
-        clone.style.pointerEvents = 'auto';
-
-        const renderHost = document.createElement('div');
-        renderHost.setAttribute('data-pdf-render-host', 'true');
-        // Keep capture source out of viewport so nothing is visibly rendered in the page.
-        // Fixed positioning avoids pushing page height and visual artifacts below the site.
-        renderHost.style.position = 'fixed';
-        renderHost.style.left = `${window.innerWidth + 100}px`;
-        renderHost.style.top = '0';
-        renderHost.style.width = '1px';
-        renderHost.style.height = '1px';
-        renderHost.style.overflow = 'visible';
-        renderHost.style.background = 'transparent';
-        renderHost.style.pointerEvents = 'none';
-        renderHost.appendChild(clone);
-        document.body.appendChild(renderHost);
-
-        const styleEl = document.createElement('style');
-        styleEl.setAttribute('data-pdf-export', 'true');
-        styleEl.textContent = `
-          .pdf-export { font-family: Arial, sans-serif; color: #111; }
-          .pdf-export h1, .pdf-export h2, .pdf-export h3, .pdf-export h4, .pdf-export h5, .pdf-export h6 {
-            margin: 18px 0 10px;
-            line-height: 1.25;
-            page-break-after: avoid;
-            break-after: avoid-page;
-            page-break-inside: avoid;
-            break-inside: avoid-page;
-          }
-          .pdf-export p { margin: 10px 0; line-height: 1.6; }
-          .pdf-export ul, .pdf-export ol { margin: 10px 0 10px 20px; }
-          .pdf-export li {
-            page-break-inside: avoid;
-            break-inside: avoid-page;
-          }
-          .pdf-export pre {
-            background: #f6f8fa;
-            padding: 12px;
-            border-radius: 6px;
-            overflow: visible;
-            white-space: pre-wrap;
-            word-break: break-word;
-            page-break-inside: avoid;
-          }
-          .pdf-export code {
-            background: #f6f8fa;
-            padding: 0.2em 0.35em;
-            border-radius: 4px;
-          }
-          .pdf-export blockquote {
-            margin: 16px 0;
-            padding: 0 1em;
-            border-left: 4px solid #ddd;
-            color: #444;
-            page-break-inside: avoid;
-          }
-          .pdf-export table { width: 100%; border-collapse: collapse; page-break-inside: avoid; }
-          .pdf-export th, .pdf-export td { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
-          .pdf-export img { max-width: 100%; height: auto; page-break-inside: avoid; }
-          .pdf-export a { color: #0969da; text-decoration: none; }
-        `;
-        document.head.appendChild(styleEl);
-
-        try {
-            // Wait one frame so the browser applies layout/styles before capture.
-            await new Promise<void>((resolve) => {
-                window.requestAnimationFrame(() => resolve());
-            });
-            await waitForImagesInElement(clone);
-
-            const mod = await import('html2pdf.js');
-            const html2pdf = mod.default;
-
-            const worker = html2pdf()
-                .set({
-                    margin: 10,
-                    filename: `${safeTitle}.pdf`,
-                    image: {type: 'jpeg', quality: 0.98},
-                    pagebreak: {
-                        mode: ['css', 'legacy'],
-                        avoid: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'blockquote', 'table', 'img', 'li']
-                    },
-                    html2canvas: {
-                        scale: 2,
-                        useCORS: true,
-                        backgroundColor: '#ffffff',
-                        scrollX: 0,
-                        scrollY: 0,
-                        windowWidth: Math.max(clone.scrollWidth, 900),
-                        windowHeight: Math.max(clone.scrollHeight, 1200)
-                    },
-                    jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'},
-                } as any)
-                .from(clone);
-
-            if (mode === 'download') {
-                await worker.save();
-            } else {
-                const pdf = await worker.toPdf().get('pdf');
-                const blob = pdf.output('blob');
-                const blobUrl = URL.createObjectURL(blob);
-                if (pdfTab) {
-                    // Use replace to avoid keeping about:blank in history.
-                    pdfTab.location.replace(blobUrl);
-                }
-                window.setTimeout(() => {
-                    URL.revokeObjectURL(blobUrl);
-                }, 60_000);
-            }
-        } catch (err) {
-            if (pdfTab) pdfTab.close();
-            // Keep console visibility for debugging
-            console.error('PDF generation failed:', err);
-        } finally {
-            document.body.removeChild(renderHost);
-            document.head.removeChild(styleEl);
-        }
+        const printTab = window.open('about:blank', '_blank');
+        if (!printTab) return;
+        const printableHtml = buildExportDocumentHtml(previewEl, safeTitle, {
+            autoPrint: true,
+            autoCloseAfterPrint: false,
+            forPdf: true
+        });
+        printTab.document.open();
+        printTab.document.write(printableHtml);
+        printTab.document.close();
     };
 
-    const exportPreviewToPdf = (): void => {
-        void generatePdfFromPreview('download');
+    const exportPreviewToHtml = async (): Promise<void> => {
+        const previewEl = await waitForElementById('preview-to-print');
+        if (!previewEl) {
+            return;
+        }
+
+        const safeTitle = (filename || 'document')
+            .replace(/\.(md|html)$/i, '')
+            .replace(/[\\/:*?"<>|]+/g, '')
+            .trim() || 'document';
+
+        const htmlContent = buildExportDocumentHtml(previewEl, safeTitle, {autoPrint: false, forPdf: false});
+        const htmlBlob = new Blob([htmlContent], {type: 'text/html;charset=utf-8'});
+        const htmlUrl = URL.createObjectURL(htmlBlob);
+
+        const link = document.createElement('a');
+        link.href = htmlUrl;
+        link.download = `${safeTitle}.html`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        window.setTimeout(() => URL.revokeObjectURL(htmlUrl), 1000);
     };
 
     const viewPreviewPdf = (): void => {
-        void generatePdfFromPreview('open');
+        void generatePdfFromPreview();
     };
 
     const fetchGithubMarkdown = async (): Promise<void> => {
@@ -562,10 +535,10 @@ const Render: React.FC = () => {
                                             {langData.textViewPDF}
                                         </SecondaryButton>
                                         <SecondaryButton
-                                            onClick={exportPreviewToPdf}
+                                            onClick={() => void exportPreviewToHtml()}
                                             disabled={!markdown || markdown.trim().length === 0}
                                         >
-                                            {langData.textExportPDF}
+                                            {langData.textExportHTML}
                                         </SecondaryButton>
                                         <Input
                                             type="file"
@@ -630,11 +603,34 @@ const Render: React.FC = () => {
                             </SectionButtons>
                         </Section>
                     </ToolbarContainer>}
+                    {(isFocusMode || selectedView === 'editor' || selectedView === 'both') && (
+                        <EditorModeBar>
+                            <EditorModeButtons>
+                                <EditorModeButton
+                                    type="button"
+                                    $active={activeEditorTab === 'markdown'}
+                                    onClick={() => setActiveEditorTab('markdown')}
+                                >
+                                    {langData.textMarkdownTab}
+                                </EditorModeButton>
+                                <EditorModeButton
+                                    type="button"
+                                    $active={activeEditorTab === 'css'}
+                                    onClick={() => setActiveEditorTab('css')}
+                                >
+                                    {langData.textCssTab}
+                                </EditorModeButton>
+                            </EditorModeButtons>
+                        </EditorModeBar>
+                    )}
                     <EditorPreviewContainer $isFocusMode={isFocusMode}>
                         {(isFocusMode || selectedView === 'editor' || selectedView === 'both') && (
                             <Editor
                                 markdown={markdown}
                                 onChange={handleChange}
+                                customCss={customCss}
+                                onChangeCss={setCustomCss}
+                                activeTab={activeEditorTab}
                                 isDarkMode={isDarkMode}
                                 language={language}
                             />
@@ -645,6 +641,7 @@ const Render: React.FC = () => {
                                 markdown={markdown}
                                 isDarkMode={isDarkMode}
                                 containerId="preview-to-print"
+                                customCss={customCss}
                             />
                         )}
                     </EditorPreviewContainer>

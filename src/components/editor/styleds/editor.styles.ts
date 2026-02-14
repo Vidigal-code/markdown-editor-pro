@@ -1,5 +1,29 @@
 import styled from 'styled-components';
 
+export const EditorPanel = styled.div`
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+`;
+
+export const EditorTabs = styled.div`
+    display: flex;
+    gap: 8px;
+`;
+
+export const EditorTabButton = styled.button<{$active: boolean}>`
+    border: 1px solid ${props => props.theme.border};
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    background: ${props => (props.$active ? props.theme.primary : props.theme.secondary)};
+    color: ${props => (props.$active ? '#ffffff' : props.theme.text)};
+`;
+
 export const EditorContainer = styled.textarea`
     flex: 1;
     width: 100%;

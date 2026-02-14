@@ -19,6 +19,9 @@ export interface TranslationData {
     textFocusMode: string;
     textShowTools: string;
     textAreaPlaceholderEditor: string;
+    textAreaPlaceholderCssEditor: string;
+    textMarkdownTab: string;
+    textCssTab: string;
     textBack: string;
     textGitHubUsername: string;
     textFilenamePlaceholder: string;
@@ -33,6 +36,7 @@ export interface TranslationData {
     textUpload: string;
     textExportPDF: string;
     textViewPDF: string;
+    textExportHTML: string;
     textViewMode: string;
     textPreview: string;
     textBoth: string;
@@ -88,13 +92,18 @@ export interface PreviewProps {
     markdown: string;
     isDarkMode?: boolean;
     containerId?: string;
+    customCss?: string;
 }
 
+export type EditorTab = 'markdown' | 'css';
 
 export interface EditorProps {
     language: Language;
     markdown: string;
     onChange: (value: string) => void;
+    customCss: string;
+    onChangeCss: (value: string) => void;
+    activeTab: EditorTab;
     isDarkMode?: boolean;
 }
 

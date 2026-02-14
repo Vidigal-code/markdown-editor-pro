@@ -61,6 +61,50 @@ export const EditorPreviewContainer = styled.div<{ $isFocusMode?: boolean }>`
     }
 `;
 
+export const EditorModeBar = styled.div`
+    display: flex;
+    width: 100%;
+    margin-bottom: 12px;
+    justify-content: center;
+
+    @media (min-width: 1025px) {
+        justify-content: flex-start;
+    }
+`;
+
+export const EditorModeButtons = styled.div`
+    display: flex;
+    gap: 12px;
+
+    @media (max-width: 1024px) {
+        width: 100%;
+        max-width: 720px;
+        justify-content: center;
+    }
+
+    @media (max-width: 768px) {
+        width: 100%;
+        gap: 10px;
+    }
+`;
+
+export const EditorModeButton = styled.button<{$active: boolean}>`
+    border: 1px solid ${props => props.theme.border};
+    border-radius: 8px;
+    padding: 10px 16px;
+    min-width: 130px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    background: ${props => (props.$active ? props.theme.primary : props.theme.secondary)};
+    color: ${props => (props.$active ? '#ffffff' : props.theme.text)};
+
+    @media (max-width: 768px) {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+`;
+
 const mediaQueries = {
     phone: "(max-width: 640px)",
     tablet: "(max-width: 1024px)",
