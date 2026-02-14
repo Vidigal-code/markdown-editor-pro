@@ -62,9 +62,12 @@ const scopeCssToSelector = (css: string, scopeSelector: string): string => {
                     return selector;
                 }
                 if (selector === ':root') {
-                    return `${scopeSelector} :is(.markdown-preview-content)`;
+                    return scopeSelector;
                 }
-                return `${scopeSelector} :is(${selector})`;
+                if (selector === 'html' || selector === 'body') {
+                    return scopeSelector;
+                }
+                return `${scopeSelector} ${selector}`;
             })
             .join(', ');
 
@@ -81,9 +84,9 @@ export const getScopedMarkdownCss = (customCss: string | undefined, scopeSelecto
     return scopeCssToSelector(cssToUse, scopeSelector);
 };
 
-export default function Preview({markdown, containerId, customCss}: PreviewProps) {
+export default function Preview({markdown, containerId}: PreviewProps) {
     const sanitizedMarkdown = DOMPurify.sanitize(markdown);
-    const scopedCss = getScopedMarkdownCss(customCss, `.${PREVIEW_SCOPE_CLASS}`);
+    const scopedCss = getScopedMarkdownCss(undefined, `.${PREVIEW_SCOPE_CLASS}`);
 
     return (
         <PreviewContainer id={containerId}>
