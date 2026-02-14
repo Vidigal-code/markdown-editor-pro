@@ -16,6 +16,9 @@
   "textShowTools": "Mostrar ferramentas",
   "textBack": "Voltar",
   "textAreaPlaceholderEditor": "Escreva seu markdown aqui",
+  "textAreaPlaceholderCssEditor": "Escreva seu CSS para o preview/PDF aqui",
+  "textMarkdownTab": "Markdown",
+  "textCssTab": "CSS",
   "textGitHubUsername": "Nome de usuário do GitHub",
   "textFilenamePlaceholder": "Nome do arquivo",
   "textFileManagement": "Gerenciamento de Arquivos",
@@ -236,7 +239,6 @@
         }
       ]
     }
-  ]
+  ],
+  "textExportHTML": "Exportar HTML"
 }
-
-
