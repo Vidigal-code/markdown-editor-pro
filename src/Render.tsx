@@ -220,7 +220,7 @@ const Render: React.FC = () => {
     const buildExportDocumentHtml = (
         previewEl: HTMLElement,
         safeTitle: string,
-        options?: {autoPrint?: boolean; autoCloseAfterPrint?: boolean; forPdf?: boolean}
+        options?: { autoPrint?: boolean; autoCloseAfterPrint?: boolean; forPdf?: boolean }
     ): string => {
         const clone = document.createElement('div');
         clone.className = 'pdf-export';
@@ -236,20 +236,27 @@ const Render: React.FC = () => {
         const exportPadding = '0';
         const exportMaxWidth = isPdfMode ? '100%' : '190mm';
 
-        return `
-<!doctype html>
-<html>
+        return `<!doctype html>
+<html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${documentTitle}</title>
   <style>
-    @page { size: A4; margin: ${pageMargin}; }
-    html, body {
+    @page {
+      size: A4;
+      margin: ${pageMargin};
+    }
+
+    html,
+    body {
       margin: 0;
       padding: 0;
       background: #ffffff;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
+
     .pdf-export {
       box-sizing: border-box;
       width: 100%;
@@ -258,14 +265,26 @@ const Render: React.FC = () => {
       padding: ${exportPadding};
       background: #ffffff;
     }
+
     ${previewScopedCss}
-    .pdf-export h1, .pdf-export h2, .pdf-export h3, .pdf-export h4, .pdf-export h5, .pdf-export h6 {
+
+    .pdf-export h1,
+    .pdf-export h2,
+    .pdf-export h3,
+    .pdf-export h4,
+    .pdf-export h5,
+    .pdf-export h6 {
       page-break-after: avoid;
       break-after: avoid-page;
       page-break-inside: avoid;
       break-inside: avoid-page;
     }
-    .pdf-export li, .pdf-export pre, .pdf-export blockquote, .pdf-export table, .pdf-export img {
+
+    .pdf-export li,
+    .pdf-export pre,
+    .pdf-export blockquote,
+    .pdf-export table,
+    .pdf-export img {
       page-break-inside: avoid;
       break-inside: avoid-page;
     }
@@ -273,39 +292,56 @@ const Render: React.FC = () => {
 </head>
 <body>
   ${clone.outerHTML}
+
   <script>
     (function () {
       var shouldAutoPrint = ${shouldAutoPrint ? 'true' : 'false'};
+      var shouldAutoClose = ${shouldAutoCloseAfterPrint ? 'true' : 'false'};
+
       document.title = ${JSON.stringify(safeTitle)};
+
       if (!shouldAutoPrint) return;
+
       var imgs = Array.prototype.slice.call(document.images || []);
+
       var waitForImages = imgs.map(function (img) {
         return new Promise(function (resolve) {
           if (img.complete) {
             resolve();
             return;
           }
+
           var done = function () {
             img.removeEventListener('load', done);
             img.removeEventListener('error', done);
             resolve();
           };
+
           img.addEventListener('load', done, { once: true });
           img.addEventListener('error', done, { once: true });
+
           setTimeout(done, 5000);
         });
       });
+
       Promise.all(waitForImages).finally(function () {
-        window.focus();
-        window.print();
+        requestAnimationFrame(function () {
+          window.focus();
+          window.print();
+        });
       });
-      if (${shouldAutoCloseAfterPrint ? 'true' : 'false'}) {
-        window.addEventListener('afterprint', function () {
-          window.close();
-        }, { once: true });
+
+      if (shouldAutoClose) {
+        window.addEventListener(
+          'afterprint',
+          function () {
+            window.close();
+          },
+          { once: true }
+        );
       }
     })();
-  <\/script>
+  </script>
 </body>
 </html>`;
     };
@@ -457,9 +493,9 @@ const Render: React.FC = () => {
                 setMarkdown(sanitizedContent);
                 addToHistory(sanitizedContent);
             });
-           // .catch(error => {
-             //   console.error('Error reading file:', error);
-           // });
+        // .catch(error => {
+        //   console.error('Error reading file:', error);
+        // });
     };
 
 
@@ -494,7 +530,7 @@ const Render: React.FC = () => {
                 <Content $isFocusMode={isFocusMode}>
                     {!isFocusMode && messageError != null && (
                         <ToolbarContainer>
-                            <Section style={{border: 'none', boxShadow: 'none', background:'#ec5353'}}>
+                            <Section style={{border: 'none', boxShadow: 'none', background: '#ec5353'}}>
                                 <span style={{color: 'white'}}>{messageError}</span>
                             </Section>
                         </ToolbarContainer>)}

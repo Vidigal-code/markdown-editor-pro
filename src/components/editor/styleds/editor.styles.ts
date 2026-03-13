@@ -40,8 +40,7 @@ export const EditorContainer = styled.textarea`
     color: ${props => props.theme.text};
     font-size: 17px;
     font-family: var(--fontStack-monospace, ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace);
-    justify-content: center;
-    align-items: center;
+        /* Remove centralização para textarea, pois o cursor deve aparecer normalmente */
     overflow-x: hidden;
     resize: none;
 
